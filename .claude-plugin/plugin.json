@@ -1,7 +1,7 @@
 {
   "name": "checkchart",
-  "version": "0.1.0",
-  "description": "Check the facts of flowcharts, sequence diagrams and architecture diagrams before drawing them as Mermaid.",
+  "version": "0.2.0",
+  "description": "Check the facts of flowcharts, sequence diagrams and architecture diagrams before drawing them as Mermaid or SVG.",
   "author": { "name": "Sora-bluesky" },
   "license": "MIT",
   "homepage": "https://github.com/Sora-bluesky/checkchart",

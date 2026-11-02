@@ -5,7 +5,7 @@
     {
       "name": "checkchart",
       "source": "./",
-      "description": "Check the facts of flowcharts, sequence diagrams and architecture diagrams before drawing them as Mermaid."
+      "description": "Check the facts of flowcharts, sequence diagrams and architecture diagrams before drawing them as Mermaid or SVG."
     }
   ]
 }
