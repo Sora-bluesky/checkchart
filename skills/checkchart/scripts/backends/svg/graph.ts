@@ -3,7 +3,7 @@ import { keyOf, labelOf, stepOf, type Answers, type Check, type Direction, type 
 import { graphPresentation, zoneParents } from "../presentation.ts";
 import { mainPath } from "../../passes/flow.ts";
 import { emptyScene, type Shape, type SvgNode, type Point } from "./scene.ts";
-import { fontSize, headerHeight, textBlock, textWidth, widthBudget } from "./text.ts";
+import { edgeLabelBlock, fontSize, headerHeight, textBlock, textWidth, widthBudget } from "./text.ts";
 import { hierarchyEdges } from "./hierarchy.ts";
 import { routeLayout, routeMetrics } from "./route-layout.ts";
 import { layoutHierarchy } from "./layout.ts";
@@ -86,7 +86,7 @@ async function layoutGraph(model: GraphModel, answers: Answers, check: Check, el
     const extent = Math.max(32, ...exchange.map((edge) => {
       const caption = stepOf(answers, edge);
       if (caption === null) return 32;
-      const text = textBlock(caption, 240, fontSize.label);
+      const text = edgeLabelBlock(caption);
       return ["LR", "RL"].includes(model.direction) ? text.height + 16 : text.width + 20;
     }));
     for (const id of [exchange[0].from, exchange[0].to]) laneSpace.set(id, Math.max(laneSpace.get(id) ?? 0,
@@ -188,7 +188,7 @@ async function layoutGraph(model: GraphModel, answers: Answers, check: Check, el
     const from = ids.get(edge.from), to = ids.get(edge.to);
     if (!from || !to) continue;
     const label = stepOf(answers, edge);
-    const text = label === null ? undefined : textBlock(label, labelWidth, fontSize.label);
+    const text = label === null ? undefined : edgeLabelBlock(label, labelWidth);
     const id = `e${index}`;
     const layoutEdge: ElkExtendedEdge = { id, sources: [from], targets: [to] };
     if (main.has(edge)) {
@@ -199,7 +199,7 @@ async function layoutGraph(model: GraphModel, answers: Answers, check: Check, el
     root.edges?.push(layoutEdge);
     scene.edges.push({ id, source: from, target: to,
       main: main.has(edge) || model.kind === "flow" && model.nodes[edge.from]?.type === "decision" && model.edges.find((item) => item.from === edge.from) === edge,
-      sections: [], dashed: edge.style === "dashed", head: "filled", both: "dir" in edge && edge.dir === "both",
+      accent: main.has(edge), sections: [], dashed: edge.style === "dashed", head: "filled", both: "dir" in edge && edge.dir === "both",
       broken: check.bugs.some((bug) => bug.rule === "TrustChecked" && bug.evidence.kind === "architecture" && bug.evidence.connection === index),
       labels: text ? [{ id: `${id}-label`, text, box: { x: 0, y: 0, width: text.width + 12, height: text.height + 8 } }] : [],
     });

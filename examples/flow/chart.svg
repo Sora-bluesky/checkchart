@@ -2,9 +2,11 @@
 <title id="chart-title">acme saves a form</title>
 <style>
 svg {
-  --font-family: "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", "Segoe UI", sans-serif;
-  --canvas: #ffffff; --text: #232830; --edge-text: #2f353d; --line: #4b525d;
-  --node-fill: #ffffff; --node-stroke: #4b525d;
+  --font-family: "Arial", "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+  --font-mono: "BIZ UDGothic", "MS Gothic", monospace;
+  --canvas: #ffffff; --text: #232830; --edge-text: #556171; --line: #596370; --accent: #2563eb;
+  --node-fill: #ffffff; --node-stroke: #c7cdd5;
+  --tile-shadow: #0f172a0f;
   --teal-fill: #b9f5ee; --teal-stroke: #008674;
   --blue-fill: #d0e5ff; --blue-stroke: #0772e6;
   --orange-fill: #ffdea7; --orange-stroke: #ec5a00;
@@ -21,8 +23,9 @@ svg {
 }
 @media (prefers-color-scheme: dark) {
   svg {
-    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #f5f5f5; --line: #a0a6b0;
-    --node-fill: #292c31; --node-stroke: #a0a6b0;
+    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #bbc5d2; --line: #a0a6b0; --accent: #7eb0ff;
+    --node-fill: #292c31; --node-stroke: #667485;
+    --tile-shadow: #00000026;
     --teal-fill: #174b45; --teal-stroke: #58d8c7;
     --blue-fill: #183e66; --blue-stroke: #6bb1ff;
     --orange-fill: #633b1a; --orange-stroke: #ffa451;
@@ -41,7 +44,9 @@ text { fill: var(--text); stroke: none; }
 .center { text-anchor: middle; }
 .title { font-size: 22px; font-weight: 700; }
 .header { font-size: 15px; font-weight: 700; }
-.edge-label, .branch-label { font-size: 15px; fill: var(--text); }
+.edge-label, .branch-label { font-family: var(--font-mono); font-size: 13px; fill: var(--edge-text); }
+.mono { font-family: var(--font-mono); }
+.node .mono { fill: var(--edge-text); }
 .legend-label { font-size: 14px; }
 .legend-heading { font-weight: 700; }
 .blue { --fill: var(--blue-fill); --stroke: var(--blue-stroke); }
@@ -52,26 +57,26 @@ text { fill: var(--text); stroke: none; }
 .teal { --fill: var(--teal-fill); --stroke: var(--teal-stroke); }
 .tan { --fill: var(--tan-fill); --stroke: var(--tan-stroke); }
 .pink { --fill: var(--pink-fill); --stroke: var(--pink-stroke); }
-.shape, .swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 2.5px; }
+.shape { fill: var(--node-fill); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; filter: drop-shadow(0px 1px 1px var(--tile-shadow)); }
+.swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; }
 .external .shape { stroke-dasharray: 6 4; }
 .bugPath { --stroke: var(--blue-stroke); }
-.bugPath .shape, .bugPath.swatch { stroke-width: 3.5px; }
+.bugPath .shape, .bugPath.swatch { stroke-width: 1.5px; }
 .breaks { --fill: var(--break-fill); --stroke: var(--break-stroke); }
-.breaks .shape, .breaks.swatch { stroke-width: 3.5px; }
-.breaks text, .break-note text { fill: var(--break-text); }
-.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 2px; stroke-linejoin: round; }
-.dashed .edge { stroke-dasharray: 6 4; }
+.breaks .shape, .breaks.swatch { fill: var(--break-fill); stroke-width: 1.5px; }
+.breaks text, .breaks .mono, .break-note text { fill: var(--break-text); }
+.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; stroke-linejoin: round; }
+.dashed .edge { stroke-dasharray: 4 5; }
 .arrow-filled { fill: var(--connector, var(--line)); stroke: none; }
-.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 2px; }
+.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; }
+.primary { --connector: var(--accent); }
 .trust-break { --connector: var(--break-stroke); }
-.trust-break .edge { stroke-width: 2.5px; }
+.trust-break .edge { stroke-width: 1.5px; }
 .container-body { fill: var(--zone-fill); stroke: var(--zone-stroke); stroke-width: 1.5px; }
-.container-header { fill: var(--zone-header); stroke: var(--zone-stroke); stroke-width: 1.5px; }
-.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 2px; stroke-dasharray: 6 4; }
-.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 3.5px; }
-.container.breaks .container-header { fill: var(--break-fill); }
+.container-header { fill: none; stroke: none; }
+.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 1.5px; stroke-dasharray: 4 5; }
+.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 1.5px; }
 .group .container-body { fill: var(--fill); fill-opacity: 0.12; stroke: var(--stroke); stroke-opacity: 0.6; stroke-width: 1.5px; }
-.group .container-header { fill: var(--fill); fill-opacity: 1; }
 .lock { fill: none; stroke: var(--text); stroke-width: 1.5px; }
 .lock-body { fill: var(--text); stroke: none; }
 .lifeline { stroke: var(--zone-stroke); stroke-width: 1.5px; stroke-dasharray: 6 4; }
@@ -84,32 +89,32 @@ text { fill: var(--text); stroke: none; }
 .legend-body { stroke: var(--zone-stroke); stroke-width: 1px; }
 </style>
 <rect class="canvas" x="0.00" y="0.00" width="670.00" height="898.80"/>
-<text class="title" data-text="24.00 24.00 237.00 30.80"><tspan x="24.00" y="46.00" font-weight="700">acme saves a form</tspan></text>
+<text class="title" data-text="24.00 24.00 237.00 30.80"><tspan x="24.00" y="46.00" font-size="22" font-weight="700">acme saves a form</tspan></text>
 <g id="legend" data-legend="506.00 24.00 140.00 158.40">
 <rect class="legend-body" x="506.00" y="24.00" width="140.00" height="158.40"/>
-<text class="legend-label legend-heading" data-text="518.00 32.00 60.00 19.60"><tspan x="518.00" y="46.00" font-weight="700">Legend</tspan></text>
+<text class="legend-label legend-heading" data-text="518.00 32.00 60.00 19.60"><tspan x="518.00" y="46.00" font-size="14" font-weight="700">Legend</tspan></text>
 <rect class="swatch blue" x="518.00" y="61.80" width="16.00" height="12.00"/>
-<text class="legend-label" data-text="546.00 58.00 44.00 19.60"><tspan x="546.00" y="72.00" font-weight="400">Input</tspan></text>
+<text class="legend-label" data-text="546.00 58.00 44.00 19.60"><tspan x="546.00" y="72.00" font-size="14" font-weight="400">Input</tspan></text>
 <rect class="swatch teal" x="518.00" y="91.40" width="16.00" height="12.00"/>
-<text class="legend-label" data-text="546.00 87.60 40.00 19.60"><tspan x="546.00" y="101.60" font-weight="400">Work</tspan></text>
+<text class="legend-label" data-text="546.00 87.60 40.00 19.60"><tspan x="546.00" y="101.60" font-size="14" font-weight="400">Work</tspan></text>
 <rect class="swatch purple" x="518.00" y="121.00" width="16.00" height="12.00"/>
-<text class="legend-label" data-text="546.00 117.20 63.00 19.60"><tspan x="546.00" y="131.20" font-weight="400">Storage</tspan></text>
+<text class="legend-label" data-text="546.00 117.20 63.00 19.60"><tspan x="546.00" y="131.20" font-size="14" font-weight="400">Storage</tspan></text>
 <rect class="swatch tan" x="518.00" y="150.60" width="16.00" height="12.00"/>
-<text class="legend-label" data-text="546.00 146.80 52.00 19.60"><tspan x="546.00" y="160.80" font-weight="400">Result</tspan></text>
+<text class="legend-label" data-text="546.00 146.80 52.00 19.60"><tspan x="546.00" y="160.80" font-size="14" font-weight="400">Result</tspan></text>
 </g>
 <g id="diagram" transform="translate(24.00 206.40)" data-diagram="24.00 206.40 622.00 668.40">
-<g id="edge-e0" class="edge-group" data-source="n0" data-target="n1"><path id="e0-s0" class="edge" data-points="170.00,64.00 170.00,124.00" d="M 170.00,64.00 L 170.00,124.00"/><polygon class="arrow-filled" points="170.00,124.00 166.00,114.00 174.00,114.00"/></g>
-<g id="edge-e1" class="edge-group" data-source="n1" data-target="n2"><path id="e1-s0" class="edge" data-points="170.00,221.00 170.00,370.00" d="M 170.00,221.00 L 170.00,370.00"/><polygon class="arrow-filled" points="170.00,370.00 166.00,360.00 174.00,360.00"/></g>
-<g id="edge-e2" class="edge-group" data-source="n1" data-target="n4"><path id="e2-s0" class="edge" data-points="300.00,172.50 324.00,172.50 324.00,458.00 202.00,458.00 202.00,482.00" d="M 300.00,172.50 L 320.00,172.50 Q 324.00,172.50 324.00,176.50 L 324.00,454.00 Q 324.00,458.00 320.00,458.00 L 206.00,458.00 Q 202.00,458.00 202.00,462.00 L 202.00,482.00"/><polygon class="arrow-filled" points="202.00,482.00 198.00,472.00 206.00,472.00"/></g>
-<g id="edge-e3" class="edge-group dashed" data-source="n2" data-target="n3"><path id="e3-s0" class="edge" data-points="251.50,396.00 460.00,396.00 460.00,594.00" d="M 251.50,396.00 L 456.00,396.00 Q 460.00,396.00 460.00,400.00 L 460.00,594.00"/><polygon class="arrow-filled" points="460.00,594.00 456.00,584.00 464.00,584.00"/></g>
-<g id="edge-e4" class="edge-group" data-source="n2" data-target="n4"><path id="e4-s0" class="edge" data-points="170.00,422.00 170.00,482.00" d="M 170.00,422.00 L 170.00,482.00"/><polygon class="arrow-filled" points="170.00,482.00 166.00,472.00 174.00,472.00"/></g>
-<g id="node-n0" class="node terminal blue" data-node="68.00 12.00 204.00 52.00"><rect class="shape" x="68.00" y="12.00" width="204.00" height="52.00" rx="26.00"/><text class="center" data-text="85.00 26.80 170.00 22.40"><tspan x="170.00" y="42.80" font-weight="700">You submit a form</tspan></text></g>
-<g id="node-n1" class="node decision teal" data-node="40.00 124.00 260.00 97.00"><polygon class="shape" points="170.00,124.00 300.00,172.50 170.00,221.00 40.00,172.50"/><text class="center" data-text="86.50 161.30 167.00 22.40"><tspan x="170.00" y="177.30" font-weight="700">Is the form valid?</tspan></text></g>
-<g id="node-n2" class="node box teal" data-node="88.50 370.00 163.00 52.00"><rect class="shape" x="88.50" y="370.00" width="163.00" height="52.00"/><text class="center" data-text="104.50 384.80 131.00 22.40"><tspan x="170.00" y="400.80" font-weight="700">Save the form</tspan></text></g>
-<g id="node-n3" class="node store purple" data-node="386.00 594.00 148.00 62.40"><path class="shape" d="M 386.00,602.00 A 74.00,8.00 0 0 1 534.00,602.00 L 534.00,648.40 A 74.00,8.00 0 0 1 386.00,648.40 Z M 386.00,602.00 A 74.00,8.00 0 0 0 534.00,602.00"/><text class="center" data-text="402.00 614.00 116.00 22.40"><tspan x="460.00" y="630.00" font-weight="700">Saved forms</tspan></text></g>
-<g id="node-n4" class="node terminal tan" data-node="68.00 482.00 204.00 52.00"><rect class="shape" x="68.00" y="482.00" width="204.00" height="52.00" rx="26.00"/><text class="center" data-text="84.00 496.80 172.00 22.40"><tspan x="170.00" y="512.80" font-weight="700">You see the result</tspan></text></g>
-<g id="label-e1-label" data-pill="12.00 281.00 154.00 29.00"><rect class="pill" x="12.00" y="281.00" width="154.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="18.00 285.00 142.00 21.00"><tspan x="89.00" y="300.00" font-weight="400">The form is valid</tspan></text></g>
-<g id="label-e2-label" data-pill="328.00 361.75 230.00 29.00"><rect class="pill" x="328.00" y="361.75" width="230.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="334.00 365.75 218.00 21.00"><tspan x="443.00" y="380.75" font-weight="400">The form needs a change</tspan></text></g>
-<g id="label-e3-label" data-pill="464.00 394.75 146.00 29.00"><rect class="pill" x="464.00" y="394.75" width="146.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="470.00 398.75 134.00 21.00"><tspan x="537.00" y="413.75" font-weight="400">Writes the form</tspan></text></g>
+<g id="edge-e0" class="edge-group primary" data-source="n0" data-target="n1"><path id="e0-s0" class="edge" data-points="170.00,64.00 170.00,124.00" d="M 170.00,64.00 L 170.00,114.00"/><polygon class="arrow-filled" points="170.00,124.00 165.00,114.00 175.00,114.00"/></g>
+<g id="edge-e1" class="edge-group primary" data-source="n1" data-target="n2"><path id="e1-s0" class="edge" data-points="170.00,221.00 170.00,370.00" d="M 170.00,221.00 L 170.00,360.00"/><polygon class="arrow-filled" points="170.00,370.00 165.00,360.00 175.00,360.00"/></g>
+<g id="edge-e2" class="edge-group" data-source="n1" data-target="n4"><path id="e2-s0" class="edge" data-points="300.00,172.50 324.00,172.50 324.00,458.00 202.00,458.00 202.00,482.00" d="M 300.00,172.50 L 320.00,172.50 Q 324.00,172.50 324.00,176.50 L 324.00,454.00 Q 324.00,458.00 320.00,458.00 L 206.00,458.00 Q 202.00,458.00 202.00,462.00 L 202.00,472.00"/><polygon class="arrow-filled" points="202.00,482.00 197.00,472.00 207.00,472.00"/></g>
+<g id="edge-e3" class="edge-group dashed" data-source="n2" data-target="n3"><path id="e3-s0" class="edge" data-points="251.50,396.00 460.00,396.00 460.00,594.00" d="M 251.50,396.00 L 456.00,396.00 Q 460.00,396.00 460.00,400.00 L 460.00,584.00"/><polygon class="arrow-filled" points="460.00,594.00 455.00,584.00 465.00,584.00"/></g>
+<g id="edge-e4" class="edge-group primary" data-source="n2" data-target="n4"><path id="e4-s0" class="edge" data-points="170.00,422.00 170.00,482.00" d="M 170.00,422.00 L 170.00,472.00"/><polygon class="arrow-filled" points="170.00,482.00 165.00,472.00 175.00,472.00"/></g>
+<g id="node-n0" class="node terminal blue" data-node="68.00 12.00 204.00 52.00"><rect class="shape" x="68.00" y="12.00" width="204.00" height="52.00" rx="26.00"/><text class="center" data-text="85.00 26.80 170.00 22.40"><tspan x="170.00" y="42.80" font-size="16" font-weight="700">You submit a form</tspan></text></g>
+<g id="node-n1" class="node decision teal" data-node="40.00 124.00 260.00 97.00"><polygon class="shape" points="170.00,124.00 300.00,172.50 170.00,221.00 40.00,172.50"/><text class="center" data-text="86.50 161.30 167.00 22.40"><tspan x="170.00" y="177.30" font-size="16" font-weight="700">Is the form valid?</tspan></text></g>
+<g id="node-n2" class="node box teal" data-node="88.50 370.00 163.00 52.00"><rect class="shape" x="88.50" y="370.00" width="163.00" height="52.00" rx="6.00"/><text class="center" data-text="104.50 384.80 131.00 22.40"><tspan x="170.00" y="400.80" font-size="16" font-weight="700">Save the form</tspan></text></g>
+<g id="node-n3" class="node store purple" data-node="386.00 594.00 148.00 62.40"><path class="shape" d="M 386.00,602.00 A 74.00,8.00 0 0 1 534.00,602.00 L 534.00,648.40 A 74.00,8.00 0 0 1 386.00,648.40 Z M 386.00,602.00 A 74.00,8.00 0 0 0 534.00,602.00"/><text class="center" data-text="402.00 614.00 116.00 22.40"><tspan x="460.00" y="630.00" font-size="16" font-weight="700">Saved forms</tspan></text></g>
+<g id="node-n4" class="node terminal tan" data-node="68.00 482.00 204.00 52.00"><rect class="shape" x="68.00" y="482.00" width="204.00" height="52.00" rx="26.00"/><text class="center" data-text="84.00 496.80 172.00 22.40"><tspan x="170.00" y="512.80" font-size="16" font-weight="700">You see the result</tspan></text></g>
+<g id="label-e1-label" data-pill="17.00 285.00 149.00 21.00"><rect class="pill" x="17.00" y="285.00" width="149.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="23.00 289.00 137.00 13.00"><tspan class="mono" x="91.50" y="302.00" font-size="13" font-weight="400">The form is valid</tspan></text></g>
+<g id="label-e2-label" data-pill="328.00 361.75 197.00 21.00"><rect class="pill" x="328.00" y="361.75" width="197.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="334.00 365.75 185.00 13.00"><tspan class="mono" x="426.50" y="378.75" font-size="13" font-weight="400">The form needs a change</tspan></text></g>
+<g id="label-e3-label" data-pill="464.00 394.75 133.00 21.00"><rect class="pill" x="464.00" y="394.75" width="133.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="470.00 398.75 121.00 13.00"><tspan class="mono" x="530.50" y="411.75" font-size="13" font-weight="400">Writes the form</tspan></text></g>
 </g>
 </svg>

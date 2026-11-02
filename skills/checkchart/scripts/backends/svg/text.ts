@@ -1,7 +1,8 @@
 type FontWeight = 400 | 700;
+type FontFamily = "sans" | "mono";
 type TextWeight = FontWeight | "first";
-export type TextBlock = { lines: string[]; weights: FontWeight[]; width: number; height: number; fontSize: number; lineHeight: number };
-export const fontSize = { node: 16, label: 15, header: 15, legend: 14, title: 22 } as const;
+export type TextBlock = { lines: string[]; weights: FontWeight[]; sizes: number[]; families: FontFamily[]; width: number; height: number; fontSize: number; lineHeight: number };
+export const fontSize = { node: 16, detail: 13, label: 13, header: 15, legend: 14, title: 22 } as const;
 export const widthBudget = 1100;
 
 // BIZ UDPGothic advance widths in em. Wide Latin letters need their own
@@ -24,11 +25,17 @@ const boldPunctuation: Record<string, number> = {
   ",": 0.34, ".": 0.34, ":": 0.34, ";": 0.34, "?": 0.8, "[": 0.55, "]": 0.55, "{": 0.54, "}": 0.54,
 };
 
-export function textWidth(text: string, size = fontSize.node, weight: FontWeight = 400): number {
+export function textWidth(text: string, size = fontSize.node, weight: FontWeight = 400, family: FontFamily = "sans"): number {
   let em = 0;
   for (const char of text) {
     if (/[\p{Mark}\p{Cf}]/u.test(char)) continue;
     const n = char.codePointAt(0) ?? 0;
+    if (family === "mono") {
+      // BIZ UDGothic uses half-em Latin and full-em Japanese, including
+      // punctuation. Reserve 0.6em for Latin to cover monospace fallbacks.
+      em += n <= 0x7e || n >= 0xff61 && n <= 0xff9f ? 0.6 : 1;
+      continue;
+    }
     em += (weight === 700 ? boldPunctuation[char] : undefined) ?? punctuation[char] ?? (n >= 65 && n <= 90 ? (weight === 700 ? boldUpperWidths : upperWidths)[n - 65]
       : n >= 97 && n <= 122 ? (weight === 700 ? boldLowerWidths : lowerWidths)[n - 97] : /[0-9]/.test(char) ? char === "1" ? 0.63 : 0.76
       : /[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(char) ? 0.98 : 1);
@@ -37,22 +44,21 @@ export function textWidth(text: string, size = fontSize.node, weight: FontWeight
   return em * size * 1.03;
 }
 
-export function wrapText(text: string, maxWidth: number, size = fontSize.node, weight: TextWeight = 400): string[] {
-  return text.split(/\r\n|\r|\n/).flatMap((line, index) => wrapLine(line, maxWidth, size, weight === "first" && index ? 400 : weight));
+export function wrapText(text: string, maxWidth: number, size = fontSize.node, weight: TextWeight = 400, family: FontFamily = "sans"): string[] {
+  return text.split(/\r\n|\r|\n/).flatMap((line, index) => weight === "first" && index
+    ? wrapLine(line, maxWidth, fontSize.detail, 400, "mono") : wrapLine(line, maxWidth, size, weight === "first" ? 700 : weight, family));
 }
 
 const preferredBreak = /[ 、。・：，）]/u;
 const forbiddenStart = /[\p{Pe}\p{Pf}\p{Mark}ぁぃぅぇぉっゃゅょゎゕゖァィゥェォッャュョヮヵヶㇰ-ㇿー、。，．・：；？！,.!?;:]/u;
 type WrapPlan = { cost: number[]; end: number; from: number; to: number };
 
-function wrapLine(line: string, maxWidth: number, fontSize: number, weight: TextWeight): string[] {
+function wrapLine(line: string, maxWidth: number, size: number, weight: FontWeight, family: FontFamily): string[] {
   const chars = [...line.trim()];
   if (!chars.length) return [""];
   const widths = [0];
-  const firstWidths = [0];
   for (const char of chars) {
-    widths.push(widths.at(-1)! + textWidth(char, fontSize, weight === 700 ? 700 : 400));
-    firstWidths.push(firstWidths.at(-1)! + textWidth(char, fontSize, 700));
+    widths.push(widths.at(-1)! + textWidth(char, size, weight, family));
   }
   const breaks = [0];
   for (let i = 1; i < chars.length; i++) {
@@ -74,8 +80,7 @@ function wrapLine(line: string, maxWidth: number, fontSize: number, weight: Text
       while (to > from && /\s/u.test(chars[to - 1])) to--;
       // Hard breaks may make short lines; automatic breaks must not do so.
       if (to - from < 3 && (i > 0 || j < breaks.length - 1)) continue;
-      const advances = weight === "first" && i === 0 ? firstWidths : widths;
-      const width = advances[to] - advances[from];
+      const width = widths[to] - widths[from];
       // Only punctuation and spaces are legal cuts. Overflowing words retain
       // their natural width; layout must reserve their actual extent.
       const cost = [Math.max(0, width - maxWidth), 1, Math.max(0, maxWidth - width) ** 2]
@@ -94,11 +99,25 @@ function wrapLine(line: string, maxWidth: number, fontSize: number, weight: Text
   return lines;
 }
 
-export function textBlock(text: string, maxWidth = 228, size = fontSize.node, weight: TextWeight = 400): TextBlock {
-  const lines = wrapText(text, maxWidth, size, weight);
-  const weights = lines.map((_, index): FontWeight => weight === "first" ? index ? 400 : 700 : weight);
-  const lineHeight = size * 1.4;
-  return { lines, weights, width: Math.ceil(Math.max(0, ...lines.map((line, index) => textWidth(line, size, weights[index])))), height: lines.length * lineHeight, fontSize: size, lineHeight };
+export function textBlock(text: string, maxWidth = 228, size = fontSize.node, weight: TextWeight = 400, family: FontFamily = "sans"): TextBlock {
+  const lines = wrapText(text, maxWidth, size, weight, family);
+  const nameLines = weight === "first" ? wrapLine(text.split(/\r\n|\r|\n/)[0], maxWidth, size, 700, family).length : 0;
+  const weights = lines.map((_, index): FontWeight => weight === "first" ? index < nameLines ? 700 : 400 : weight);
+  const sizes = lines.map((_, index) => weight === "first" && index >= nameLines ? fontSize.detail : size);
+  const families = lines.map((_, index): FontFamily => weight === "first" && index >= nameLines ? "mono" : family);
+  // Keep the established label clearance even with the smaller mono face.
+  const lineHeight = Math.max(size * 1.4, family === "mono" ? 21 : 0);
+  return { lines, weights, sizes, families, width: Math.ceil(Math.max(0, ...lines.map((line, index) => textWidth(line, sizes[index], weights[index], families[index])))), height: lines.length * lineHeight, fontSize: size, lineHeight };
+}
+
+export function edgeLabelBlock(text: string, maxWidth = 240): TextBlock {
+  const block = textBlock(text, maxWidth, fontSize.label, 400, "mono");
+  // Preserve the established route envelope when the new face is smaller;
+  // compacting a label can otherwise change port selection and detour ratios.
+  const clearance = textBlock(text, maxWidth, 15);
+  block.width = Math.max(block.width, clearance.width);
+  block.height = Math.max(block.height, clearance.height);
+  return block;
 }
 
 export const headerHeight = (text: TextBlock) => text.height + 8;

@@ -47,29 +47,31 @@ test("all text colors have at least 4.5:1 contrast on every light and dark text 
     const palette = new Map([...sheet.matchAll(/--([\w-]+): #([a-f\d]{6})/g)].map((match) => [match[1], match[2]]));
     for (const [name, color] of palette) if (name.endsWith("-fill") || ["canvas", "zone-header"].includes(name)) {
       assert.ok(contrast(palette.get("text")!, color) >= 4.5, `${index ? "dark" : "light"} text on ${name}`);
+      assert.ok(contrast(palette.get("edge-text")!, color) >= 4.5, `${index ? "dark" : "light"} muted text on ${name}`);
     }
     for (const background of ["break-fill", "canvas"]) assert.ok(contrast(palette.get("break-text")!, palette.get(background)!) >= 4.5);
   }
 });
 
-test("SVG uses one Japanese-first font stack and the readable type sizes", async () => {
+test("SVG uses Japanese-capable sans and mono stacks at readable type sizes", async () => {
   const model = parseModel({ kind: "architecture", zones: { area: {} }, components: { a: {}, b: { zone: "area" } }, connections: [{ from: "a", to: "b" }] });
   if (model.kind !== "architecture") return;
   const answers = answersOf(model, checkView({ ...purpose, label: () => "日本語のラベル", step: () => "送信する" }));
   const scene = await graphScene(model, answers, check, new ELK());
   assert.ok(scene.nodes.every((node) => node.text.fontSize === 16));
   assert.ok(scene.containers.every((zone) => zone.text.fontSize === 15));
-  assert.ok(scene.edges.flatMap((edge) => edge.labels).every((label) => label.text.fontSize === 15));
+  assert.ok(scene.edges.flatMap((edge) => edge.labels).every((label) => label.text.fontSize === 13 && label.text.families.every((family) => family === "mono")));
   for (const block of [...scene.nodes, ...scene.containers, ...scene.edges.flatMap((edge) => edge.labels)].map((item) => item.text)) {
-    assert.equal(block.lineHeight, block.fontSize * 1.4);
+    assert.equal(block.lineHeight, Math.max(block.fontSize * 1.4, block.families[0] === "mono" ? 21 : 0));
   }
   const svg = render(scene, purpose.title, [["日本語の凡例", "teal"]]);
-  assert.match(svg, /--font-family: "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", "Segoe UI", sans-serif;/);
+  assert.match(svg, /--font-family: "Arial", "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;/);
+  assert.match(svg, /--font-mono: "BIZ UDGothic", "MS Gothic", monospace;/);
   assert.match(svg, /font-family: var\(--font-family\)/);
-  assert.equal((svg.match(/font-family:/g) ?? []).length, 2);
+  assert.match(svg, /\.mono \{ font-family: var\(--font-mono\);/);
   assert.match(svg, /\.title \{ font-size: 22px; font-weight: 700;/);
   assert.match(svg, /\.header \{ font-size: 15px; font-weight: 700;/);
-  assert.match(svg, /\.edge-label, \.branch-label \{ font-size: 15px; fill: var\(--text\);/);
+  assert.match(svg, /\.edge-label, \.branch-label \{ font-family: var\(--font-mono\); font-size: 13px; fill: var\(--edge-text\);/);
   assert.match(svg, /\.legend-label \{ font-size: 14px;/);
   const quality = assertLayoutQuality(svg, model);
   assert.equal(quality.textBoxes, scene.nodes.length + scene.containers.length + scene.edges.flatMap((edge) => edge.labels).length + 2);
@@ -77,7 +79,7 @@ test("SVG uses one Japanese-first font stack and the readable type sizes", async
   if (sequence.kind !== "sequence") return;
   const sequenceLayout = sequenceScene(sequence, answersOf(sequence, checkView({ ...purpose, step: () => "送信する" })), check);
   assert.ok(sequenceLayout.nodes.every((node) => node.text.fontSize === 16));
-  assert.ok(sequenceLayout.edges.flatMap((edge) => edge.labels).every((label) => label.text.fontSize === 15));
+  assert.ok(sequenceLayout.edges.flatMap((edge) => edge.labels).every((label) => label.text.fontSize === 13));
 });
 
 for (const label of [

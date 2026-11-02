@@ -104,7 +104,7 @@
     },
     "skills/checkchart/scripts/test/fixtures/architecture-label-gap": {
       "totalBends": 1,
-      "totalEdgeLength": 1634.8799999999999,
+      "totalEdgeLength": 1635.62,
       "crossings": 0,
       "maxLabelDistance": 4,
       "meanLabelDistance": 4,
@@ -113,7 +113,7 @@
       "totalTabLines": 2,
       "sameFaceCrossings": 0,
       "labelAffinityViolations": 0,
-      "width": 639.63,
+      "width": 638.04,
       "height": 1067
     },
     "skills/checkchart/scripts/test/fixtures/architecture-layout-tb": {

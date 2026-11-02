@@ -2,9 +2,11 @@
 <title id="chart-title">acme connections</title>
 <style>
 svg {
-  --font-family: "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", "Segoe UI", sans-serif;
-  --canvas: #ffffff; --text: #232830; --edge-text: #2f353d; --line: #4b525d;
-  --node-fill: #ffffff; --node-stroke: #4b525d;
+  --font-family: "Arial", "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+  --font-mono: "BIZ UDGothic", "MS Gothic", monospace;
+  --canvas: #ffffff; --text: #232830; --edge-text: #556171; --line: #596370; --accent: #2563eb;
+  --node-fill: #ffffff; --node-stroke: #c7cdd5;
+  --tile-shadow: #0f172a0f;
   --teal-fill: #b9f5ee; --teal-stroke: #008674;
   --blue-fill: #d0e5ff; --blue-stroke: #0772e6;
   --orange-fill: #ffdea7; --orange-stroke: #ec5a00;
@@ -21,8 +23,9 @@ svg {
 }
 @media (prefers-color-scheme: dark) {
   svg {
-    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #f5f5f5; --line: #a0a6b0;
-    --node-fill: #292c31; --node-stroke: #a0a6b0;
+    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #bbc5d2; --line: #a0a6b0; --accent: #7eb0ff;
+    --node-fill: #292c31; --node-stroke: #667485;
+    --tile-shadow: #00000026;
     --teal-fill: #174b45; --teal-stroke: #58d8c7;
     --blue-fill: #183e66; --blue-stroke: #6bb1ff;
     --orange-fill: #633b1a; --orange-stroke: #ffa451;
@@ -41,7 +44,9 @@ text { fill: var(--text); stroke: none; }
 .center { text-anchor: middle; }
 .title { font-size: 22px; font-weight: 700; }
 .header { font-size: 15px; font-weight: 700; }
-.edge-label, .branch-label { font-size: 15px; fill: var(--text); }
+.edge-label, .branch-label { font-family: var(--font-mono); font-size: 13px; fill: var(--edge-text); }
+.mono { font-family: var(--font-mono); }
+.node .mono { fill: var(--edge-text); }
 .legend-label { font-size: 14px; }
 .legend-heading { font-weight: 700; }
 .blue { --fill: var(--blue-fill); --stroke: var(--blue-stroke); }
@@ -52,26 +57,26 @@ text { fill: var(--text); stroke: none; }
 .teal { --fill: var(--teal-fill); --stroke: var(--teal-stroke); }
 .tan { --fill: var(--tan-fill); --stroke: var(--tan-stroke); }
 .pink { --fill: var(--pink-fill); --stroke: var(--pink-stroke); }
-.shape, .swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 2.5px; }
+.shape { fill: var(--node-fill); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; filter: drop-shadow(0px 1px 1px var(--tile-shadow)); }
+.swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; }
 .external .shape { stroke-dasharray: 6 4; }
 .bugPath { --stroke: var(--blue-stroke); }
-.bugPath .shape, .bugPath.swatch { stroke-width: 3.5px; }
+.bugPath .shape, .bugPath.swatch { stroke-width: 1.5px; }
 .breaks { --fill: var(--break-fill); --stroke: var(--break-stroke); }
-.breaks .shape, .breaks.swatch { stroke-width: 3.5px; }
-.breaks text, .break-note text { fill: var(--break-text); }
-.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 2px; stroke-linejoin: round; }
-.dashed .edge { stroke-dasharray: 6 4; }
+.breaks .shape, .breaks.swatch { fill: var(--break-fill); stroke-width: 1.5px; }
+.breaks text, .breaks .mono, .break-note text { fill: var(--break-text); }
+.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; stroke-linejoin: round; }
+.dashed .edge { stroke-dasharray: 4 5; }
 .arrow-filled { fill: var(--connector, var(--line)); stroke: none; }
-.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 2px; }
+.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; }
+.primary { --connector: var(--accent); }
 .trust-break { --connector: var(--break-stroke); }
-.trust-break .edge { stroke-width: 2.5px; }
+.trust-break .edge { stroke-width: 1.5px; }
 .container-body { fill: var(--zone-fill); stroke: var(--zone-stroke); stroke-width: 1.5px; }
-.container-header { fill: var(--zone-header); stroke: var(--zone-stroke); stroke-width: 1.5px; }
-.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 2px; stroke-dasharray: 6 4; }
-.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 3.5px; }
-.container.breaks .container-header { fill: var(--break-fill); }
+.container-header { fill: none; stroke: none; }
+.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 1.5px; stroke-dasharray: 4 5; }
+.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 1.5px; }
 .group .container-body { fill: var(--fill); fill-opacity: 0.12; stroke: var(--stroke); stroke-opacity: 0.6; stroke-width: 1.5px; }
-.group .container-header { fill: var(--fill); fill-opacity: 1; }
 .lock { fill: none; stroke: var(--text); stroke-width: 1.5px; }
 .lock-body { fill: var(--text); stroke: none; }
 .lifeline { stroke: var(--zone-stroke); stroke-width: 1.5px; stroke-dasharray: 6 4; }
@@ -84,36 +89,36 @@ text { fill: var(--text); stroke: none; }
 .legend-body { stroke: var(--zone-stroke); stroke-width: 1px; }
 </style>
 <rect class="canvas" x="0.00" y="0.00" width="1306.75" height="617.40"/>
-<text class="title" data-text="24.00 24.00 232.00 30.80"><tspan x="24.00" y="46.00" font-weight="700">acme connections</tspan></text>
+<text class="title" data-text="24.00 24.00 232.00 30.80"><tspan x="24.00" y="46.00" font-size="22" font-weight="700">acme connections</tspan></text>
 <g id="legend" data-legend="1081.75 24.00 201.00 188.00">
 <rect class="legend-body" x="1081.75" y="24.00" width="201.00" height="188.00"/>
-<text class="legend-label legend-heading" data-text="1093.75 32.00 60.00 19.60"><tspan x="1093.75" y="46.00" font-weight="700">Legend</tspan></text>
+<text class="legend-label legend-heading" data-text="1093.75 32.00 60.00 19.60"><tspan x="1093.75" y="46.00" font-size="14" font-weight="700">Legend</tspan></text>
 <rect class="swatch tan" x="1093.75" y="61.80" width="16.00" height="12.00"/>
-<text class="legend-label" data-text="1121.75 58.00 56.00 19.60"><tspan x="1121.75" y="72.00" font-weight="400">People</tspan></text>
+<text class="legend-label" data-text="1121.75 58.00 56.00 19.60"><tspan x="1121.75" y="72.00" font-size="14" font-weight="400">People</tspan></text>
 <rect class="swatch teal" x="1093.75" y="91.40" width="16.00" height="12.00"/>
-<text class="legend-label" data-text="1121.75 87.60 91.00 19.60"><tspan x="1121.75" y="101.60" font-weight="400">Application</tspan></text>
+<text class="legend-label" data-text="1121.75 87.60 91.00 19.60"><tspan x="1121.75" y="101.60" font-size="14" font-weight="400">Application</tspan></text>
 <rect class="swatch purple" x="1093.75" y="121.00" width="16.00" height="12.00"/>
-<text class="legend-label" data-text="1121.75 117.20 63.00 19.60"><tspan x="1121.75" y="131.20" font-weight="400">Storage</tspan></text>
+<text class="legend-label" data-text="1121.75 117.20 63.00 19.60"><tspan x="1121.75" y="131.20" font-size="14" font-weight="400">Storage</tspan></text>
 <rect class="swatch orange" x="1093.75" y="150.60" width="16.00" height="12.00"/>
-<text class="legend-label" data-text="1121.75 146.80 63.00 19.60"><tspan x="1121.75" y="160.80" font-weight="400">Outside</tspan></text>
+<text class="legend-label" data-text="1121.75 146.80 63.00 19.60"><tspan x="1121.75" y="160.80" font-size="14" font-weight="400">Outside</tspan></text>
 <rect class="swatch untrusted" x="1093.75" y="180.20" width="16.00" height="12.00"/>
-<text class="legend-label" data-text="1121.75 176.40 149.00 19.60"><tspan x="1121.75" y="190.40" font-weight="400">Untrusted content</tspan></text>
+<text class="legend-label" data-text="1121.75 176.40 149.00 19.60"><tspan x="1121.75" y="190.40" font-size="14" font-weight="400">Untrusted content</tspan></text>
 </g>
 <g id="diagram" transform="translate(24.00 236.00)" data-diagram="24.00 236.00 1258.75 357.40">
-<g id="container-z0" class="container " data-container="336.00 12.00 418.75 333.40" data-tab="336.00 12.00 143.00 29.00"><rect class="container-body" x="336.00" y="12.00" width="418.75" height="333.40"/><rect class="container-header" x="336.00" y="12.00" width="143.00" height="29.00"/><circle data-port="e0 in WEST 336.00,154.00" cx="336.00" cy="154.00" r="0.00"/><circle data-port="e2 out EAST 754.75,138.00" cx="754.75" cy="138.00" r="0.00"/><circle data-port="e3 in EAST 754.75,170.00" cx="754.75" cy="170.00" r="0.00"/><text class="header" data-text="348.00 16.00 119.00 21.00"><tspan x="348.00" y="31.00" font-weight="700">Your machine</tspan></text></g>
-<g id="container-z1" class="container " data-container="391.25 57.00 347.50 165.00" data-tab="391.25 57.00 198.00 29.00"><rect class="container-body" x="391.25" y="57.00" width="347.50" height="165.00"/><rect class="container-header" x="391.25" y="57.00" width="198.00" height="29.00"/><circle data-port="e0 in WEST 391.25,154.00" cx="391.25" cy="154.00" r="0.00"/><circle data-port="e1 out SOUTH 567.88,222.00" cx="567.88" cy="222.00" r="0.00"/><circle data-port="e2 out EAST 738.75,138.00" cx="738.75" cy="138.00" r="0.00"/><circle data-port="e3 in EAST 738.75,170.00" cx="738.75" cy="170.00" r="0.00"/><text class="header" data-text="403.25 61.00 174.00 21.00"><tspan x="403.25" y="76.00" font-weight="700">Application process</tspan></text></g>
-<g id="container-z2" class="container untrusted " data-container="1021.75 57.00 225.00 165.00" data-tab="1021.75 57.00 176.00 29.00"><rect class="container-body" x="1021.75" y="57.00" width="225.00" height="165.00"/><rect class="container-header" x="1021.75" y="57.00" width="176.00" height="29.00"/><path class="lock" d="M 1035.75,71.50 v -3 a 3,3 0 0 1 6,0 v 3"/><rect class="lock-body" x="1033.75" y="70.50" width="10.00" height="8.00"/><circle data-port="e2 in WEST 1021.75,138.00" cx="1021.75" cy="138.00" r="0.00"/><circle data-port="e3 out WEST 1021.75,170.00" cx="1021.75" cy="170.00" r="0.00"/><text class="header" data-text="1051.75 61.00 134.00 21.00"><tspan x="1051.75" y="76.00" font-weight="700">Remote service</tspan></text></g>
-<g id="edge-e0" class="edge-group" data-source="n0" data-target="n1"><path id="e0-s0" class="edge" data-points="82.00,83.00 82.00,154.00 336.00,154.00" d="M 82.00,83.00 L 82.00,150.00 Q 82.00,154.00 86.00,154.00 L 336.00,154.00"/><path id="e0-s1" class="edge" data-points="336.00,154.00 391.25,154.00" d="M 336.00,154.00 L 391.25,154.00"/><path id="e0-s2" class="edge" data-points="391.25,154.00 508.75,154.00" d="M 391.25,154.00 L 508.75,154.00"/><polygon class="arrow-filled" points="508.75,154.00 498.75,158.00 498.75,150.00"/></g>
-<g id="edge-e1" class="edge-group" data-source="n1" data-target="n2"><path id="e1-s0" class="edge" data-points="567.88,206.00 567.88,222.00" d="M 567.88,206.00 L 567.88,222.00"/><polygon class="arrow-filled" points="567.88,206.00 571.88,216.00 563.88,216.00"/><path id="e1-s1" class="edge" data-points="567.88,222.00 567.88,267.10" d="M 567.88,222.00 L 567.88,267.10"/><polygon class="arrow-filled" points="567.88,267.10 563.88,257.10 571.88,257.10"/></g>
-<g id="edge-e2" class="edge-group dashed" data-source="n1" data-target="n3"><path id="e2-s0" class="edge" data-points="701.75,138.00 738.75,138.00" d="M 701.75,138.00 L 738.75,138.00"/><path id="e2-s1" class="edge" data-points="738.75,138.00 754.75,138.00" d="M 738.75,138.00 L 754.75,138.00"/><path id="e2-s2" class="edge" data-points="754.75,138.00 1021.75,138.00" d="M 754.75,138.00 L 1021.75,138.00"/><path id="e2-s3" class="edge" data-points="1021.75,138.00 1037.75,138.00" d="M 1021.75,138.00 L 1037.75,138.00"/><polygon class="arrow-filled" points="1037.75,138.00 1027.75,142.00 1027.75,134.00"/></g>
-<g id="edge-e3" class="edge-group dashed" data-source="n3" data-target="n1"><path id="e3-s0" class="edge" data-points="1037.75,170.00 1021.75,170.00" d="M 1037.75,170.00 L 1021.75,170.00"/><path id="e3-s1" class="edge" data-points="1021.75,170.00 754.75,170.00" d="M 1021.75,170.00 L 754.75,170.00"/><path id="e3-s2" class="edge" data-points="754.75,170.00 738.75,170.00" d="M 754.75,170.00 L 738.75,170.00"/><path id="e3-s3" class="edge" data-points="738.75,170.00 701.75,170.00" d="M 738.75,170.00 L 701.75,170.00"/><polygon class="arrow-filled" points="701.75,170.00 711.75,166.00 711.75,174.00"/></g>
-<g id="node-n1" class="node box teal" data-node="508.75 102.00 193.00 104.00"><rect class="shape" x="508.75" y="102.00" width="193.00" height="104.00"/><text class="center" data-text="580.75 142.80 49.00 22.40"><tspan x="605.25" y="158.80" font-weight="700">acme</tspan></text></g>
-<g id="node-n2" class="node store purple" data-node="487.00 267.00 140.00 62.40"><path class="shape" d="M 487.00,275.00 A 70.00,8.00 0 0 1 627.00,275.00 L 627.00,321.40 A 70.00,8.00 0 0 1 487.00,321.40 Z M 487.00,275.00 A 70.00,8.00 0 0 0 627.00,275.00"/><text class="center" data-text="505.00 287.00 104.00 22.40"><tspan x="557.00" y="303.00" font-weight="700">Saved data</tspan></text></g>
-<g id="node-n3" class="node external orange" data-node="1037.75 102.00 193.00 104.00"><rect class="shape" x="1037.75" y="102.00" width="193.00" height="104.00"/><text class="center" data-text="1053.75 142.80 161.00 22.40"><tspan x="1134.25" y="158.80" font-weight="700">Remote endpoint</tspan></text></g>
-<g id="node-n0" class="node terminal tan" data-node="12.00 31.00 140.00 52.00"><rect class="shape" x="12.00" y="31.00" width="140.00" height="52.00" rx="26.00"/><text class="center" data-text="64.00 45.80 36.00 22.40"><tspan x="82.00" y="61.80" font-weight="700">You</tspan></text></g>
-<g id="label-e0-label" data-pill="125.00 158.00 168.00 29.00"><rect class="pill" x="125.00" y="158.00" width="168.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="131.00 162.00 156.00 21.00"><tspan x="209.00" y="177.00" font-weight="400">Submits a request</tspan></text></g>
-<g id="label-e1-label" data-pill="360.88 230.05 203.00 29.00"><rect class="pill" x="360.88" y="230.05" width="203.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="366.88 234.05 191.00 21.00"><tspan x="462.38" y="249.05" font-weight="400">Reads and writes data</tspan></text></g>
-<g id="label-e2-label" data-pill="806.75 105.00 163.00 29.00"><rect class="pill" x="806.75" y="105.00" width="163.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="812.75 109.00 151.00 21.00"><tspan x="888.25" y="124.00" font-weight="400">Requests a result</tspan></text></g>
-<g id="label-e3-label" data-pill="813.25 174.00 150.00 29.00"><rect class="pill" x="813.25" y="174.00" width="150.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="819.25 178.00 138.00 21.00"><tspan x="888.25" y="193.00" font-weight="400">Returns a result</tspan></text></g>
+<g id="container-z0" class="container " data-container="336.00 12.00 418.75 333.40" data-tab="336.00 12.00 143.00 29.00"><rect class="container-body" x="336.00" y="12.00" width="418.75" height="333.40" rx="8.00"/><rect class="container-header" x="336.00" y="12.00" width="143.00" height="29.00"/><circle data-port="e0 in WEST 336.00,154.00" cx="336.00" cy="154.00" r="0.00"/><circle data-port="e2 out EAST 754.75,138.00" cx="754.75" cy="138.00" r="0.00"/><circle data-port="e3 in EAST 754.75,170.00" cx="754.75" cy="170.00" r="0.00"/><text class="header" data-text="348.00 20.00 119.00 21.00"><tspan x="348.00" y="35.00" font-size="15" font-weight="700">Your machine</tspan></text></g>
+<g id="container-z1" class="container " data-container="391.25 57.00 347.50 165.00" data-tab="391.25 57.00 198.00 29.00"><rect class="container-body" x="391.25" y="57.00" width="347.50" height="165.00" rx="8.00"/><rect class="container-header" x="391.25" y="57.00" width="198.00" height="29.00"/><circle data-port="e0 in WEST 391.25,154.00" cx="391.25" cy="154.00" r="0.00"/><circle data-port="e1 out SOUTH 567.88,222.00" cx="567.88" cy="222.00" r="0.00"/><circle data-port="e2 out EAST 738.75,138.00" cx="738.75" cy="138.00" r="0.00"/><circle data-port="e3 in EAST 738.75,170.00" cx="738.75" cy="170.00" r="0.00"/><text class="header" data-text="403.25 65.00 174.00 21.00"><tspan x="403.25" y="80.00" font-size="15" font-weight="700">Application process</tspan></text></g>
+<g id="container-z2" class="container untrusted " data-container="1021.75 57.00 225.00 165.00" data-tab="1021.75 57.00 176.00 29.00"><rect class="container-body" x="1021.75" y="57.00" width="225.00" height="165.00" rx="8.00"/><rect class="container-header" x="1021.75" y="57.00" width="176.00" height="29.00"/><path class="lock" d="M 1035.75,71.50 v -3 a 3,3 0 0 1 6,0 v 3"/><rect class="lock-body" x="1033.75" y="70.50" width="10.00" height="8.00"/><circle data-port="e2 in WEST 1021.75,138.00" cx="1021.75" cy="138.00" r="0.00"/><circle data-port="e3 out WEST 1021.75,170.00" cx="1021.75" cy="170.00" r="0.00"/><text class="header" data-text="1051.75 65.00 134.00 21.00"><tspan x="1051.75" y="80.00" font-size="15" font-weight="700">Remote service</tspan></text></g>
+<g id="edge-e0" class="edge-group" data-source="n0" data-target="n1"><path id="e0-s0" class="edge" data-points="82.00,83.00 82.00,154.00 336.00,154.00" d="M 82.00,83.00 L 82.00,150.00 Q 82.00,154.00 86.00,154.00 L 336.00,154.00"/><path id="e0-s1" class="edge" data-points="336.00,154.00 391.25,154.00" d="M 336.00,154.00 L 391.25,154.00"/><path id="e0-s2" class="edge" data-points="391.25,154.00 508.75,154.00" d="M 391.25,154.00 L 498.75,154.00"/><polygon class="arrow-filled" points="508.75,154.00 498.75,159.00 498.75,149.00"/></g>
+<g id="edge-e1" class="edge-group" data-source="n1" data-target="n2"><path id="e1-s0" class="edge" data-points="567.88,206.00 567.88,222.00" d="M 567.88,216.00 L 567.88,222.00"/><polygon class="arrow-filled" points="567.88,206.00 572.88,216.00 562.88,216.00"/><path id="e1-s1" class="edge" data-points="567.88,222.00 567.88,267.10" d="M 567.88,222.00 L 567.88,257.10"/><polygon class="arrow-filled" points="567.88,267.10 562.88,257.10 572.88,257.10"/></g>
+<g id="edge-e2" class="edge-group dashed" data-source="n1" data-target="n3"><path id="e2-s0" class="edge" data-points="701.75,138.00 738.75,138.00" d="M 701.75,138.00 L 738.75,138.00"/><path id="e2-s1" class="edge" data-points="738.75,138.00 754.75,138.00" d="M 738.75,138.00 L 754.75,138.00"/><path id="e2-s2" class="edge" data-points="754.75,138.00 1021.75,138.00" d="M 754.75,138.00 L 1021.75,138.00"/><path id="e2-s3" class="edge" data-points="1021.75,138.00 1037.75,138.00" d="M 1021.75,138.00 L 1027.75,138.00"/><polygon class="arrow-filled" points="1037.75,138.00 1027.75,143.00 1027.75,133.00"/></g>
+<g id="edge-e3" class="edge-group dashed" data-source="n3" data-target="n1"><path id="e3-s0" class="edge" data-points="1037.75,170.00 1021.75,170.00" d="M 1037.75,170.00 L 1021.75,170.00"/><path id="e3-s1" class="edge" data-points="1021.75,170.00 754.75,170.00" d="M 1021.75,170.00 L 754.75,170.00"/><path id="e3-s2" class="edge" data-points="754.75,170.00 738.75,170.00" d="M 754.75,170.00 L 738.75,170.00"/><path id="e3-s3" class="edge" data-points="738.75,170.00 701.75,170.00" d="M 738.75,170.00 L 711.75,170.00"/><polygon class="arrow-filled" points="701.75,170.00 711.75,165.00 711.75,175.00"/></g>
+<g id="node-n1" class="node box teal" data-node="508.75 102.00 193.00 104.00"><rect class="shape" x="508.75" y="102.00" width="193.00" height="104.00" rx="6.00"/><text class="center" data-text="580.75 142.80 49.00 22.40"><tspan x="605.25" y="158.80" font-size="16" font-weight="700">acme</tspan></text></g>
+<g id="node-n2" class="node store purple" data-node="487.00 267.00 140.00 62.40"><path class="shape" d="M 487.00,275.00 A 70.00,8.00 0 0 1 627.00,275.00 L 627.00,321.40 A 70.00,8.00 0 0 1 487.00,321.40 Z M 487.00,275.00 A 70.00,8.00 0 0 0 627.00,275.00"/><text class="center" data-text="505.00 287.00 104.00 22.40"><tspan x="557.00" y="303.00" font-size="16" font-weight="700">Saved data</tspan></text></g>
+<g id="node-n3" class="node external orange" data-node="1037.75 102.00 193.00 104.00"><rect class="shape" x="1037.75" y="102.00" width="193.00" height="104.00" rx="6.00"/><text class="center" data-text="1053.75 142.80 161.00 22.40"><tspan x="1134.25" y="158.80" font-size="16" font-weight="700">Remote endpoint</tspan></text></g>
+<g id="node-n0" class="node terminal tan" data-node="12.00 31.00 140.00 52.00"><rect class="shape" x="12.00" y="31.00" width="140.00" height="52.00" rx="26.00"/><text class="center" data-text="64.00 45.80 36.00 22.40"><tspan x="82.00" y="61.80" font-size="16" font-weight="700">You</tspan></text></g>
+<g id="label-e0-label" data-pill="134.50 158.00 149.00 21.00"><rect class="pill" x="134.50" y="158.00" width="149.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="140.50 162.00 137.00 13.00"><tspan class="mono" x="209.00" y="175.00" font-size="13" font-weight="400">Submits a request</tspan></text></g>
+<g id="label-e1-label" data-pill="382.88 234.05 181.00 21.00"><rect class="pill" x="382.88" y="234.05" width="181.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="388.88 238.05 169.00 13.00"><tspan class="mono" x="473.38" y="251.05" font-size="13" font-weight="400">Reads and writes data</tspan></text></g>
+<g id="label-e2-label" data-pill="813.75 113.00 149.00 21.00"><rect class="pill" x="813.75" y="113.00" width="149.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="819.75 117.00 137.00 13.00"><tspan class="mono" x="888.25" y="130.00" font-size="13" font-weight="400">Requests a result</tspan></text></g>
+<g id="label-e3-label" data-pill="817.75 174.00 141.00 21.00"><rect class="pill" x="817.75" y="174.00" width="141.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="823.75 178.00 129.00 13.00"><tspan class="mono" x="888.25" y="191.00" font-size="13" font-weight="400">Returns a result</tspan></text></g>
 </g>
 </svg>

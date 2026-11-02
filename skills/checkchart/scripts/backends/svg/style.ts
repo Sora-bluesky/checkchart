@@ -1,12 +1,13 @@
 import { fontSize } from "./text.ts";
 
-// Teal, blue, orange and green are measured Lucidchart pairs. Purple, tan,
-// pink and yellow are derived with the same light-fill / saturated-border rule.
+// Shared tokens keep tiles, panels and labels consistent in both themes.
 export const style = `
 svg {
-  --font-family: "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", "Segoe UI", sans-serif;
-  --canvas: #ffffff; --text: #232830; --edge-text: #2f353d; --line: #4b525d;
-  --node-fill: #ffffff; --node-stroke: #4b525d;
+  --font-family: "Arial", "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+  --font-mono: "BIZ UDGothic", "MS Gothic", monospace;
+  --canvas: #ffffff; --text: #232830; --edge-text: #556171; --line: #596370; --accent: #2563eb;
+  --node-fill: #ffffff; --node-stroke: #c7cdd5;
+  --tile-shadow: #0f172a0f;
   --teal-fill: #b9f5ee; --teal-stroke: #008674;
   --blue-fill: #d0e5ff; --blue-stroke: #0772e6;
   --orange-fill: #ffdea7; --orange-stroke: #ec5a00;
@@ -23,8 +24,9 @@ svg {
 }
 @media (prefers-color-scheme: dark) {
   svg {
-    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #f5f5f5; --line: #a0a6b0;
-    --node-fill: #292c31; --node-stroke: #a0a6b0;
+    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #bbc5d2; --line: #a0a6b0; --accent: #7eb0ff;
+    --node-fill: #292c31; --node-stroke: #667485;
+    --tile-shadow: #00000026;
     --teal-fill: #174b45; --teal-stroke: #58d8c7;
     --blue-fill: #183e66; --blue-stroke: #6bb1ff;
     --orange-fill: #633b1a; --orange-stroke: #ffa451;
@@ -43,7 +45,9 @@ text { fill: var(--text); stroke: none; }
 .center { text-anchor: middle; }
 .title { font-size: ${fontSize.title}px; font-weight: 700; }
 .header { font-size: ${fontSize.header}px; font-weight: 700; }
-.edge-label, .branch-label { font-size: ${fontSize.label}px; fill: var(--text); }
+.edge-label, .branch-label { font-family: var(--font-mono); font-size: ${fontSize.label}px; fill: var(--edge-text); }
+.mono { font-family: var(--font-mono); }
+.node .mono { fill: var(--edge-text); }
 .legend-label { font-size: ${fontSize.legend}px; }
 .legend-heading { font-weight: 700; }
 .blue { --fill: var(--blue-fill); --stroke: var(--blue-stroke); }
@@ -54,26 +58,26 @@ text { fill: var(--text); stroke: none; }
 .teal { --fill: var(--teal-fill); --stroke: var(--teal-stroke); }
 .tan { --fill: var(--tan-fill); --stroke: var(--tan-stroke); }
 .pink { --fill: var(--pink-fill); --stroke: var(--pink-stroke); }
-.shape, .swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 2.5px; }
+.shape { fill: var(--node-fill); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; filter: drop-shadow(0px 1px 1px var(--tile-shadow)); }
+.swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; }
 .external .shape { stroke-dasharray: 6 4; }
 .bugPath { --stroke: var(--blue-stroke); }
-.bugPath .shape, .bugPath.swatch { stroke-width: 3.5px; }
+.bugPath .shape, .bugPath.swatch { stroke-width: 1.5px; }
 .breaks { --fill: var(--break-fill); --stroke: var(--break-stroke); }
-.breaks .shape, .breaks.swatch { stroke-width: 3.5px; }
-.breaks text, .break-note text { fill: var(--break-text); }
-.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 2px; stroke-linejoin: round; }
-.dashed .edge { stroke-dasharray: 6 4; }
+.breaks .shape, .breaks.swatch { fill: var(--break-fill); stroke-width: 1.5px; }
+.breaks text, .breaks .mono, .break-note text { fill: var(--break-text); }
+.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; stroke-linejoin: round; }
+.dashed .edge { stroke-dasharray: 4 5; }
 .arrow-filled { fill: var(--connector, var(--line)); stroke: none; }
-.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 2px; }
+.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; }
+.primary { --connector: var(--accent); }
 .trust-break { --connector: var(--break-stroke); }
-.trust-break .edge { stroke-width: 2.5px; }
+.trust-break .edge { stroke-width: 1.5px; }
 .container-body { fill: var(--zone-fill); stroke: var(--zone-stroke); stroke-width: 1.5px; }
-.container-header { fill: var(--zone-header); stroke: var(--zone-stroke); stroke-width: 1.5px; }
-.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 2px; stroke-dasharray: 6 4; }
-.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 3.5px; }
-.container.breaks .container-header { fill: var(--break-fill); }
+.container-header { fill: none; stroke: none; }
+.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 1.5px; stroke-dasharray: 4 5; }
+.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 1.5px; }
 .group .container-body { fill: var(--fill); fill-opacity: 0.12; stroke: var(--stroke); stroke-opacity: 0.6; stroke-width: 1.5px; }
-.group .container-header { fill: var(--fill); fill-opacity: 1; }
 .lock { fill: none; stroke: var(--text); stroke-width: 1.5px; }
 .lock-body { fill: var(--text); stroke: none; }
 .lifeline { stroke: var(--zone-stroke); stroke-width: 1.5px; stroke-dasharray: 6 4; }

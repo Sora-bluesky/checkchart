@@ -1,4 +1,4 @@
-import { fontSize, textBlock, widthBudget, type TextBlock } from "./text.ts";
+import { fontSize, textBlock, textWidth, widthBudget, type TextBlock } from "./text.ts";
 import { tabBox, type Box, type Container, type Label, type Point, type Scene, type SvgEdge, type SvgNode } from "./scene.ts";
 import { style } from "./style.ts";
 import { canvasObstacles, routeTextObstacles } from "./obstacles.ts";
@@ -12,7 +12,7 @@ const rect = (box: Box, cls: string, extra = "") => `<rect class="${cls}" x="${n
 const pair = (p: Point) => `${number(p.x)},${number(p.y)}`;
 const text = (block: TextBlock, x: number, y: number, cls: string) => {
   const box = { x: x - (cls.split(" ").includes("center") ? block.width / 2 : 0), y, width: block.width, height: block.height };
-  return `<text class="${cls}" data-text="${boxData(box)}">${block.lines.map((line, index) => `<tspan x="${number(x)}" y="${number(y + block.fontSize + index * block.lineHeight)}" font-weight="${block.weights[index]}">${xml(line)}</tspan>`).join("")}</text>`;
+  return `<text class="${cls}" data-text="${boxData(box)}">${block.lines.map((line, index) => `<tspan${block.families[index] === "mono" ? ' class="mono"' : ""} x="${number(x)}" y="${number(y + block.sizes[index] + index * block.lineHeight)}" font-size="${block.sizes[index]}" font-weight="${block.weights[index]}">${xml(line)}</tspan>`).join("")}</text>`;
 };
 const centeredText = (label: { text: TextBlock; box: Box }, cls = "") => text(label.text, label.box.x + label.box.width / 2, label.box.y + (label.box.height - label.text.height) / 2, `center ${cls}`.trim());
 
@@ -27,7 +27,7 @@ function node(node: SvgNode) {
       break;
     }
     case "terminal": shape = rect(node.box, "shape", ` rx="${number(h / 2)}"`); break;
-    default: shape = rect(node.box, "shape");
+    default: shape = rect(node.box, "shape", ' rx="6.00"');
   }
   return `<g id="node-${node.id}" class="node ${node.shape} ${node.classes.join(" ")}" data-node="${boxData(node.box)}">${shape}${centeredText(node)}</g>`;
 }
@@ -48,12 +48,20 @@ export function roundedPath(points: Point[]): string {
   return `${d} L ${pair(points.at(-1) ?? points[0])}`;
 }
 
+const arrowLength = 10, arrowHalfWidth = 5;
+function headBase(tip: Point, previous: Point): Point {
+  const length = Math.hypot(tip.x - previous.x, tip.y - previous.y);
+  const scale = length ? Math.min(arrowLength, length) / length : 0;
+  return { x: tip.x + (previous.x - tip.x) * scale, y: tip.y + (previous.y - tip.y) * scale };
+}
+
 function head(tip: Point, previous: Point, kind: SvgEdge["head"]) {
   const length = Math.hypot(tip.x - previous.x, tip.y - previous.y);
   if (!length) return "";
   const dx = (tip.x - previous.x) / length, dy = (tip.y - previous.y) / length;
-  const left = { x: tip.x - dx * 10 - dy * 4, y: tip.y - dy * 10 + dx * 4 };
-  const right = { x: tip.x - dx * 10 + dy * 4, y: tip.y - dy * 10 - dx * 4 };
+  const base = headBase(tip, previous);
+  const left = { x: base.x - dy * arrowHalfWidth, y: base.y + dx * arrowHalfWidth };
+  const right = { x: base.x + dy * arrowHalfWidth, y: base.y - dx * arrowHalfWidth };
   if (kind === "lost") return `<path class="lost" d="M ${pair({ x: tip.x - 5, y: tip.y - 5 })} L ${pair({ x: tip.x + 5, y: tip.y + 5 })} M ${pair({ x: tip.x + 5, y: tip.y - 5 })} L ${pair({ x: tip.x - 5, y: tip.y + 5 })}"/>`;
   return kind === "open" ? `<path class="arrow-open" d="M ${pair(left)} L ${pair(tip)} L ${pair(right)}"/>`
     : `<polygon class="arrow-filled" points="${[tip, left, right].map(pair).join(" ")}"/>`;
@@ -62,11 +70,14 @@ function head(tip: Point, previous: Point, kind: SvgEdge["head"]) {
 function edge(edge: SvgEdge) {
   const sections = edge.sections.map((points, index) => {
     const first = points[0], second = points[1], end = points.at(-1), before = points.at(-2);
-    return `<path id="${edge.id}-s${index}" class="edge" data-points="${points.map(pair).join(" ")}" d="${roundedPath(points)}"/>`
+    const shaft = [...points];
+    if (edge.both && first && second && index === 0) shaft[0] = headBase(first, second);
+    if (edge.head !== "lost" && end && before && index === edge.sections.length - 1) shaft[shaft.length - 1] = headBase(end, before);
+    return `<path id="${edge.id}-s${index}" class="edge" data-points="${points.map(pair).join(" ")}" d="${roundedPath(shaft)}"/>`
       + (end && before && index === edge.sections.length - 1 ? head(end, before, edge.head) : "")
       + (edge.both && first && second && index === 0 ? head(first, second, "filled") : "");
   }).join("");
-  return `<g id="edge-${edge.id}" class="edge-group${edge.dashed ? " dashed" : ""}${edge.broken ? " trust-break" : ""}"${edge.source ? ` data-source="${edge.source}" data-target="${edge.target}"` : ""}>${sections}</g>`;
+  return `<g id="edge-${edge.id}" class="edge-group${edge.dashed ? " dashed" : ""}${edge.accent ? " primary" : ""}${edge.broken ? " trust-break" : ""}"${edge.source ? ` data-source="${edge.source}" data-target="${edge.target}"` : ""}>${sections}</g>`;
 }
 
 function container(zone: Container) {
@@ -74,13 +85,34 @@ function container(zone: Container) {
   const lockX = box.x + 12, lockY = box.y + (zone.headerHeight - 14) / 2;
   const lock = zone.untrusted ? `<path class="lock" d="M ${pair({ x: lockX + 2, y: lockY + 7 })} v -3 a 3,3 0 0 1 6,0 v 3"/><rect class="lock-body" x="${number(lockX)}" y="${number(lockY + 6)}" width="10.00" height="8.00"/>` : "";
   return `<g id="container-${zone.id}" class="container${zone.untrusted ? " untrusted" : ""}${zone.sequence ? " group" : ""} ${zone.classes.join(" ")}" data-container="${boxData(box)}" data-tab="${boxData(tabBox(zone))}">`
-    + rect(box, "container-body") + rect(tabBox(zone), "container-header") + lock
+    + rect(box, "container-body", ' rx="8.00"') + rect(tabBox(zone), "container-header") + lock
     + (zone.ports ?? []).map((port) => `<circle data-port="${xml(port.edge)} ${port.incoming ? "in" : "out"} ${port.side} ${pair(port.point)}" cx="${number(port.point.x)}" cy="${number(port.point.y)}" r="0.00"/>`).join("")
-    + text(zone.text, box.x + (zone.untrusted ? 30 : 12), box.y + (zone.headerHeight - zone.text.height) / 2, "header") + "</g>";
+    + text(zone.text, box.x + (zone.untrusted ? 30 : 12), box.y + zone.headerHeight - zone.text.height, "header") + "</g>";
 }
 
-function pill(label: Label) {
-  return `<g id="label-${label.id}" data-pill="${boxData(label.box)}"${label.onRoute ? ' data-on-route="true"' : ""}>${rect(label.box, "pill", ` rx="4.00"${label.onRoute ? ' style="fill:#fff"' : ""}`)}${centeredText(label, "edge-label")}</g>`;
+function pill(label: Label, edge: SvgEdge) {
+  // Routing reserves the old font envelope. Fit visible content inside that
+  // legal space, toward its finished segment, without reserving phantom rows
+  // or trailing line spacing as if they were ink.
+  const block = { ...label.text,
+    width: Math.ceil(Math.max(0, ...label.text.lines.map((line, i) => textWidth(line, label.text.sizes[i], label.text.weights[i], label.text.families[i])))),
+    height: (label.text.lines.length - 1) * label.text.lineHeight + label.text.sizes.at(-1)!,
+  };
+  const width = Math.min(label.box.width, block.width + 12), height = Math.min(label.box.height, block.height + 8);
+  const clamp = (value: number, low: number, high: number) => Math.max(low, Math.min(high, value));
+  const candidates = edge.sections.flatMap((section) => (section.length === 1 ? [{ a: section[0], b: section[0] }]
+    : section.slice(1).map((b, i) => ({ a: section[i], b })))).map(({ a, b }) => {
+    const box = { width, height,
+      x: clamp((a.x + b.x - width) / 2, label.box.x, label.box.x + label.box.width - width),
+      y: clamp((a.y + b.y - height) / 2, label.box.y, label.box.y + label.box.height - height),
+    };
+    const distance = Math.hypot(Math.max(box.x - Math.max(a.x, b.x), Math.min(a.x, b.x) - box.x - width, 0),
+      Math.max(box.y - Math.max(a.y, b.y), Math.min(a.y, b.y) - box.y - height, 0));
+    const offset = Math.hypot(box.x + width / 2 - label.box.x - label.box.width / 2, box.y + height / 2 - label.box.y - label.box.height / 2);
+    return { box, distance, offset };
+  }).sort((a, b) => a.distance - b.distance || a.offset - b.offset);
+  const box = candidates[0]?.box ?? { ...label.box, width, height };
+  return `<g id="label-${label.id}" data-pill="${boxData(box)}"${label.onRoute ? ' data-on-route="true"' : ""}>${rect(box, "pill", ` rx="4.00"${label.onRoute ? ' style="fill:#fff"' : ""}`)}${centeredText({ text: block, box }, "edge-label")}</g>`;
 }
 
 function note(note: Scene["notes"][number]) {
@@ -131,6 +163,6 @@ export function render(scene: Scene, title: string, entries: [string, string][])
     }
     lines.push("</g>");
   }
-  lines.push(...scene.edges.map(edge), ...scene.nodes.map(node), ...scene.notes.map(note), ...scene.edges.flatMap((edge) => edge.labels.map(pill)), "</g>", "</svg>");
+  lines.push(...scene.edges.map(edge), ...scene.nodes.map(node), ...scene.notes.map(note), ...scene.edges.flatMap((edge) => edge.labels.map((label) => pill(label, edge))), "</g>", "</svg>");
   return lines.join("\n") + "\n";
 }

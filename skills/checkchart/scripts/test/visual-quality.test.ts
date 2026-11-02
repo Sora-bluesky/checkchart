@@ -11,7 +11,7 @@ import { render } from "../backends/svg/render.ts";
 import { textWidth, wrapText } from "../backends/svg/text.ts";
 import { overlaps, tabBox } from "../backends/svg/scene.ts";
 import { assertLayoutQuality } from "./svg-geometry.ts";
-import { root, scratch } from "./helpers.ts";
+import { root, run, scratch } from "./helpers.ts";
 import { assertLabelAffinity, assertSvgMinimumJog, assertVisualBaseline, assertVisualLimits, assertVisualText, assertVisualWidth, labelDistance, measureChart, visualCorpus, visualQuality, type VisualMetrics } from "./visual-quality.ts";
 
 const baselineFile = new URL("./visual-quality-baseline.json", import.meta.url);
@@ -88,6 +88,38 @@ test("visual audit measures section joins, box distances and crossings on the wh
 
 const check = { rules: [], bugs: [], unchecked: [] };
 const purpose = { title: "acme", reader: "A maintainer", question: "How does acme work?" };
+test("acme Webhook text stays 4-8px from its own horizontal segment outside both zones", async (t) => {
+  const dir = path.join(import.meta.dirname, "fixtures", "rendering");
+  const file = path.join(dir, "acme-order-lr.json"), out = path.join(scratch(t), "out");
+  const result = run(file, out, path.join(dir, "acme-order-lr.mjs"), ["--svg"]);
+  assert.equal(result.status, 1, result.stderr || result.report);
+  assert.match(result.report, /TrustChecked breaks/);
+  const svg = fs.readFileSync(path.join(out, "chart.svg"), "utf8"), model = loadModel(file);
+  const quality = visualQuality(svg, model);
+  assertVisualLimits(quality);
+  assertLayoutQuality(svg, model);
+  const label = svg.match(/<g id="label-e4-label"[^>]*>(.*?)<\/g>/)![1];
+  assert.match(label, /支払い結果を通知する（Webhook）/);
+  const [x, , width] = label.match(/data-text="([^"]+)"/)![1].split(" ").map(Number);
+  const lines = [...label.matchAll(/<tspan\b[^>]* y="([^"]+)" font-size="([^"]+)"/g)]
+    .map((m) => ({ top: Number(m[1]) - Number(m[2]), height: Number(m[2]) }));
+  const top = Math.min(...lines.map((line) => line.top));
+  const drawn = { x, y: top, width, height: Math.max(...lines.map((line) => line.top + line.height)) - top };
+  const own = svg.match(/<g id="edge-e4"[^>]*>(.*?)<\/g>/)![1];
+  const horizontal = [...own.matchAll(/data-points="([^"]+)"/g)].flatMap((section) => {
+    const points = section[1].split(" ").map((point) => {
+      const [x, y] = point.split(",").map(Number);
+      return { x, y };
+    });
+    return points.slice(1).map((b, i) => ({ a: points[i], b })).filter(({ a, b }) => a.y === b.y);
+  });
+  const gap = Math.min(...horizontal.map((segment) => labelDistance(drawn, segment)));
+  assert.ok(gap >= 4 - 0.03 && gap <= 8 + 0.03, `Webhook text is ${gap}px from its own line`);
+  for (const zone of svg.matchAll(/data-container="([^"]+)"/g)) {
+    const [x, y, width, height] = zone[1].split(" ").map(Number);
+    assert.ok(!overlaps(drawn, { x, y, width, height }), "Webhook text stays outside foreign zones");
+  }
+});
 for (const name of ["acme-order-tb", "label-affinity"]) test(`fallback labels stay closest to their own finished route: ${name}`, async () => {
   const dir = path.join(import.meta.dirname, "fixtures", "rendering");
   const model = loadModel(path.join(dir, `${name}.json`));

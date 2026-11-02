@@ -72,7 +72,7 @@ export function assertVisualText(svg: string, model: Model, answers: Answers) {
     assert.ok(caption !== undefined, `unmapped text ${id}`);
     const lines = [...body.matchAll(/<tspan\b[^>]*>(.*?)<\/tspan>/gs)].map((m) => m[1].replace(/&(amp|lt|gt|quot|apos);/g, (_, entity) => entities[entity]));
     const tab = id.startsWith("container-"), node = id.startsWith("node-");
-    const budget = tab ? 320 : node ? 200 : 240, size = node ? 16 : 15;
+    const budget = tab ? 320 : node ? 200 : 240;
     assert.doesNotMatch(body, /textLength=|lengthAdjust=/, `${id} shrinks text`);
     if (tab) {
       const zone = attributes.match(/data-container="([^"]+)"/), header = attributes.match(/data-tab="([^"]+)"/);
@@ -94,7 +94,9 @@ export function assertVisualText(svg: string, model: Model, answers: Answers) {
           while (source[offset] === " ") offset++;
         }
       } while (offset < source.length);
-      if (cursor - start > 1) assert.ok(textWidth(source, size, tab || node && index === 0 ? 700 : 400) > budget, `${id} wrapped below its ${budget}px budget`);
+      const name = node && index === 0;
+      const size = tab ? 15 : name ? 16 : 13;
+      if (cursor - start > 1) assert.ok(textWidth(source, size, tab || name ? 700 : 400, tab || name ? "sans" : "mono") > budget, `${id} wrapped below its ${budget}px budget`);
     }
     assert.equal(cursor, lines.length, `${id} added lines`);
   }
