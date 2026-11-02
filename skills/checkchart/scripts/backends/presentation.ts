@@ -4,7 +4,7 @@ import {
 } from "../ir.ts";
 import { captions } from "./captions.ts";
 
-export const ruleNames = (rules: Iterable<string>) => [...new Set(rules)].sort(byText).join(" or ");
+export const ruleNames = (rules: Iterable<string>, separator: string) => [...new Set(rules)].sort(byText).join(separator);
 
 // Both renderers use the same marks, paths, legend wording and invalid-zone policy.
 export function graphPresentation(model: Model, answers: Answers, check: Check) {
@@ -21,8 +21,8 @@ export function graphPresentation(model: Model, answers: Answers, check: Check) 
   const legend: [string, string][] = [];
   for (const [group, color] of answers.colors) if (used.has(group)) legend.push([group, color]);
   if (model.kind === "architecture" && Object.values(model.zones).some((zone) => zone.untrusted)) legend.push([caption.untrusted, "untrusted"]);
-  if (check.bugs.length) legend.push([caption.breaks(ruleNames(check.bugs.map((bug) => bug.rule))), "breaks"]);
-  if (trail.size) legend.push([caption.bugPath(ruleNames(pathRules)), "bugPath"]);
+  if (check.bugs.length) legend.push([caption.breaks(ruleNames(check.bugs.map((bug) => bug.rule), caption.ruleSeparator)), "breaks"]);
+  if (trail.size) legend.push([caption.bugPath(ruleNames(pathRules, caption.ruleSeparator)), "bugPath"]);
   return { broken, trail, legend };
 }
 

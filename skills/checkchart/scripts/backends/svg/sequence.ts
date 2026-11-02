@@ -116,7 +116,7 @@ export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
       cursor += Math.max(40, box.height + 16) + (loop ? loopHeight : 0);
     }
     if (rules.length) {
-      const note = sticky(caption.breaks(ruleNames(rules)), target, cursor + 2, `break-${index}`, true);
+      const note = sticky(caption.breaks(ruleNames(rules, caption.ruleSeparator)), target, cursor + 2, `break-${index}`, true);
       scene.notes.push(note);
       cursor = note.box.y + note.box.height + 12;
       scene.bands.push({ ...span(participants), y: top - 4, height: cursor - top + 4 });
