@@ -26,7 +26,7 @@ Work in a scratch folder outside the repo. Write `model.json` and `view.mjs`, th
 
 The launcher needs Node 22.18 to 22.x, Node 23.6 or later, Bun 1.1.5 or later, or Deno 2 or later. You can also run `node --disable-warning=ExperimentalWarning <skill dir>/scripts/checkchart.ts model.json`.
 
-Native SVG needs elkjs installed in `<skill dir>/scripts`. Only `--svg` loads it. Drawing needs no network or browser. Without `--svg`, the command writes Mermaid and a report without loading packages. See [references/render.md](references/render.md) for SVG appearance and Mermaid rendering with Pele.
+Native SVG needs elkjs installed in `<skill dir>/scripts`. Only `--svg` loads it. If `--svg` stops with "Run npm install in <skill dir>/scripts to draw SVG.", run `npm ci` in that folder once and draw again. A plugin install or update starts without it. Drawing needs no network or browser. Without `--svg`, the command writes Mermaid and a report without loading packages. See [references/render.md](references/render.md) for SVG appearance and Mermaid rendering with Pele.
 
 The output folder must be new or empty. Without `--out`, it is `model-chart` beside `model.json`. The command writes `chart.mmd` and `report.md`, prints the report, and adds `chart.svg` with `--svg`. Exit 0 means every rule holds, even if warnings remain. Exit 1 means a rule breaks. Exit 2 means an input error; no files are published.
 

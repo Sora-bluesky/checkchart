@@ -55,6 +55,8 @@ claude plugin marketplace add Sora-bluesky/checkchart
 claude plugin install checkchart@checkchart
 ```
 
+プラグインには elkjs が入っていません。初めて `--svg` が「Run npm install」で止まったら、プラグインの `skills/checkchart/scripts`（`~/.claude/plugins/cache/checkchart/` の下）で `npm ci` を実行するか、Claude に実行させてください。プラグインを更新したときも同じです。
+
 `skills/checkchart` を `~/.claude/skills/` へコピー（またはリンク）しても動きます。
 
 ## 検査しないこと

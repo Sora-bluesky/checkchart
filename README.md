@@ -55,6 +55,8 @@ claude plugin marketplace add Sora-bluesky/checkchart
 claude plugin install checkchart@checkchart
 ```
 
+The plugin does not bring elkjs with it. The first time `--svg` stops with "Run npm install", run `npm ci` in the plugin's `skills/checkchart/scripts` folder (under `~/.claude/plugins/cache/checkchart/`), or let Claude do it. Do this again after each plugin update.
+
 Or copy (or link) `skills/checkchart` into `~/.claude/skills/`.
 
 ## What it does not check
