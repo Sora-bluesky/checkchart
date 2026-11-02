@@ -7,7 +7,7 @@ import { checkView } from "../frontends/view.ts";
 import { textBlock, textWidth } from "../backends/svg/text.ts";
 import { assertLayoutQuality } from "./svg-geometry.ts";
 import { assertVisualLimits, visualQuality } from "./visual-quality.ts";
-import { root, run, runModel as runRawModel, runModelWithPurpose as runModel, scratch, simpleFlow, simpleSequence } from "./helpers.ts";
+import { root, run, runModel as runRawModel, runModelWithPurpose as runModel, scratch, simpleArchitecture, simpleFlow, simpleSequence } from "./helpers.ts";
 
 const englishCaptions = /Legend|Untrusted content|Breaks |Branch \d|Path to the .* bug|[Uu]ndeclared participant/;
 for (const backend of ["mermaid", "svg"]) test(`${backend} renders Japanese fixed captions in architecture and sequence charts`, (t) => {
@@ -34,6 +34,16 @@ for (const backend of ["mermaid", "svg"]) test(`${backend} renders Japanese fixe
       const baseline = visualQuality(fs.readFileSync(path.join(english.out, "chart.svg"), "utf8"), model);
       for (const key of ["totalBends", "crossings", "maxDetourRatio"] as const) assert.ok(quality.metrics[key] <= baseline.metrics[key], key);
     }
+  }
+});
+
+test("Japanese architecture joins multiple rule names in both charts", (t) => {
+  const model = { ...simpleArchitecture, zones: { outer: {}, inner: { parent: "outer" } }, components: { screen: { zone: "inner" }, core: { zone: "inner" } } };
+  const result = runModel(t, model, 'export const locale = "ja"; export const step = () => null;', ["--svg"]);
+  assert.equal(result.status, 1, result.stderr);
+  for (const chart of [result.chart, fs.readFileSync(path.join(result.out, "chart.svg"), "utf8")]) {
+    assert.match(chart.replaceAll(/<[^>]+>/g, ""), /規則違反：ArrowsLabeled、NoRedundantContainer/);
+    assert.doesNotMatch(chart, / or /);
   }
 });
 
@@ -69,7 +79,7 @@ test("Japanese flow paths, standalone breaks and undeclared participants use loc
 });
 
 test("Japanese captions reserve full measured widths and wrap at punctuation without splitting rule names", () => {
-  for (const [caption, size, budget] of [["凡例", 14, 260], ["信頼しない範囲", 14, 260], ["規則違反：Answered or Recovered", 16, 228], ["分岐 1", 13, 240]] as const) {
+  for (const [caption, size, budget] of [["凡例", 14, 260], ["信頼しない範囲", 14, 260], ["規則違反：Answered、Recovered", 16, 228], ["分岐 1", 13, 240]] as const) {
     const block = textBlock(caption, budget, size);
     assert.equal(block.lines.join("").replaceAll(" ", ""), caption.replaceAll(" ", ""));
     assert.ok(block.lines.every((line) => textWidth(line, size) <= block.width));

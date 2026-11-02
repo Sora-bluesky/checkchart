@@ -1,5 +1,6 @@
 export const captions = {
   en: {
+    ruleSeparator: " or ",
     legend: "Legend",
     untrusted: "Untrusted content",
     breaks: (rules: string) => `Breaks ${rules}`,
@@ -10,6 +11,7 @@ export const captions = {
     undeclaredComment: "Undeclared participant",
   },
   ja: {
+    ruleSeparator: "、",
     legend: "凡例",
     untrusted: "信頼しない範囲",
     breaks: (rules: string) => `規則違反：${rules}`,
