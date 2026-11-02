@@ -1,0 +1,1 @@
+{"kind":"sequence","participants":["screen","core"],"messages":[{"id":"request","from":"screen","to":"core","type":"call"}]}

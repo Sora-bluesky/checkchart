@@ -1,0 +1,18 @@
+{
+  "kind": "flow",
+  "direction": "TB",
+  "nodes": {
+    "start": { "type": "start" },
+    "check": { "type": "decision" },
+    "save": { "type": "step" },
+    "db": { "type": "store" },
+    "done": { "type": "end" }
+  },
+  "edges": [
+    { "from": "start", "to": "check" },
+    { "from": "check", "to": "save", "when": "valid" },
+    { "from": "check", "to": "done", "when": "invalid" },
+    { "from": "save", "to": "db", "style": "dashed" },
+    { "from": "save", "to": "done" }
+  ]
+}

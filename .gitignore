@@ -1,0 +1,12 @@
+/*
+!/.gitignore
+!/skills/
+!/examples/
+!/.claude-plugin/
+!/.github/
+!/README.md
+!/README.ja.md
+!/LICENSE
+!/NOTICE
+!/.gitattributes
+node_modules/

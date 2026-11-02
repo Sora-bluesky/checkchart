@@ -1,0 +1,10 @@
+{
+  "name": "checkchart",
+  "version": "0.1.0",
+  "description": "Check the facts of flowcharts, sequence diagrams and architecture diagrams before drawing them as Mermaid.",
+  "author": { "name": "Sora-bluesky" },
+  "license": "MIT",
+  "homepage": "https://github.com/Sora-bluesky/checkchart",
+  "repository": "https://github.com/Sora-bluesky/checkchart",
+  "keywords": ["Mermaid", "flowchart", "sequence", "architecture", "design", "pstack"]
+}

@@ -1,0 +1,36 @@
+{
+  "kind": "architecture",
+  "direction": "TB",
+  "zones": {
+    "client": {},
+    "workers": {},
+    "nested": { "parent": "workers" },
+    "observer": {}
+  },
+  "components": {
+    "entry": {},
+    "screen": { "zone": "client" },
+    "helper": { "zone": "client" },
+    "command": {},
+    "coordinator": { "zone": "workers" },
+    "first": { "zone": "workers" },
+    "second": { "zone": "workers" },
+    "third": { "zone": "workers" },
+    "adapter": { "zone": "nested" },
+    "terminal": { "zone": "nested" },
+    "listener": { "zone": "observer" }
+  },
+  "connections": [
+    { "from": "entry", "to": "screen" },
+    { "from": "entry", "to": "command" },
+    { "from": "screen", "to": "helper" },
+    { "from": "screen", "to": "coordinator" },
+    { "from": "command", "to": "coordinator" },
+    { "from": "coordinator", "to": "first" },
+    { "from": "coordinator", "to": "second" },
+    { "from": "coordinator", "to": "adapter" },
+    { "from": "adapter", "to": "terminal" },
+    { "from": "coordinator", "to": "third" },
+    { "from": "coordinator", "to": "listener", "style": "dashed" }
+  ]
+}

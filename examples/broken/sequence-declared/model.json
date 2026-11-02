@@ -1,0 +1,1 @@
+{"kind":"sequence","participants":["screen","core","unused"],"messages":[{"from":"screen","to":"core","type":"signal"}]}

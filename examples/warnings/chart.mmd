@@ -1,0 +1,31 @@
+---
+title: "acme request processing"
+---
+flowchart LR
+  subgraph legend["Legend"]
+    direction LR
+    lg0["Entry"]
+    lg1["Work"]
+    lg2["Storage"]
+    lg0 ~~~ lg1 ~~~ lg2
+  end
+  class lg0 blue
+  class lg1 teal
+  class lg2 purple
+  subgraph z0["Service boundary"]
+    subgraph z1["Application process"]
+      subgraph z2["Worker group"]
+        n2["Worker"]
+        n3[("Stored data")]
+      end
+      n1["Request router"]
+    end
+    n0["Client"]
+  end
+  n0 <-->|"Uses."| n1
+  n1 -->|"Queues a work item"| n2
+  n2 -->|"Writes the result"| n3
+  class n0 blue
+  class n1 teal
+  class n2 teal
+  class n3 purple

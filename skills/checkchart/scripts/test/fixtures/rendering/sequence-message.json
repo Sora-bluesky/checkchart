@@ -1,0 +1,14 @@
+{
+  "kind": "sequence",
+  "participants": [
+    "a",
+    "b"
+  ],
+  "messages": [
+    {
+      "type": "signal",
+      "from": "a",
+      "to": "b"
+    }
+  ]
+}

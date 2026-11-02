@@ -1,0 +1,22 @@
+---
+title: "acme receives requests"
+---
+sequenceDiagram
+  box transparent Screen
+    participant p0 as You
+  end
+  box transparent Service
+    participant p1 as Application
+    participant p2 as Worker
+  end
+  p1->>p2: Asks for the result
+  p2-->>p1: Returns the result
+  p2->>p2: Updates its cache
+  Note over p2,p1: The result is ready
+  par Show the result
+    p2-)p0: Shows the result
+  and Acknowledge the update
+    p0->>p2: Acknowledges, with a timeout
+  end
+  p0--xp2: The update is lost
+  p2-)p0: Sends a fresh copy

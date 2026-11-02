@@ -1,0 +1,13 @@
+{
+  "kind": "sequence",
+  "participants": [
+    "worker"
+  ],
+  "messages": [
+    {
+      "from": "worker",
+      "to": "worker",
+      "type": "self"
+    }
+  ]
+}

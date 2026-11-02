@@ -1,0 +1,19 @@
+{
+  "kind": "architecture",
+  "direction": "TB",
+  "zones": { "screen": {}, "workers": {} },
+  "components": {
+    "entry": {},
+    "main": { "zone": "screen" },
+    "renderer": { "zone": "screen" },
+    "command": {},
+    "core": { "zone": "workers" }
+  },
+  "connections": [
+    { "from": "entry", "to": "main" },
+    { "from": "entry", "to": "command" },
+    { "from": "main", "to": "renderer" },
+    { "from": "main", "to": "core" },
+    { "from": "command", "to": "core" }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "kind": "architecture",
+  "direction": "TB",
+  "zones": { "input": { "untrusted": true } },
+  "components": {
+    "upper": {}, "lower": { "zone": "input" }, "core": {},
+    "first": {}, "second": { "shape": "store" },
+    "third": { "shape": "person" }, "fourth": { "shape": "external" }
+  },
+  "connections": [
+    { "id": "down", "from": "upper", "to": "lower" },
+    { "id": "up", "from": "lower", "to": "upper", "checkedBy": "upper" },
+    { "from": "core", "to": "first" },
+    { "from": "core", "to": "second" },
+    { "from": "core", "to": "third" },
+    { "from": "core", "to": "fourth" }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "architecture",
+  "direction": "TB",
+  "zones": { "local": {}, "remote": { "untrusted": true } },
+  "components": {
+    "client": { "shape": "person" },
+    "api": { "zone": "local" },
+    "worker": { "zone": "local" },
+    "store": { "zone": "local", "shape": "store" },
+    "service": { "zone": "remote", "shape": "external" }
+  },
+  "connections": [
+    { "id": "submit", "from": "client", "to": "api" },
+    { "id": "process", "from": "api", "to": "worker" },
+    { "id": "save", "from": "worker", "to": "store" },
+    { "id": "request", "from": "worker", "to": "service", "style": "dashed" },
+    { "id": "notify", "from": "service", "to": "api", "style": "dashed" }
+  ]
+}

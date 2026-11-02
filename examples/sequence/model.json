@@ -1,0 +1,16 @@
+{
+  "kind": "sequence",
+  "participants": ["ui", "main", "core"],
+  "messages": [
+    { "id": "hello", "from": "main", "to": "core", "type": "call" },
+    { "from": "core", "to": "main", "type": "reply", "answers": "hello" },
+    { "from": "core", "to": "core", "type": "self" },
+    { "type": "note", "over": ["core", "main"] },
+    { "branches": ["show", "acknowledge"], "par": [
+      [{ "from": "core", "to": "ui", "type": "signal" }],
+      [{ "id": "ack", "from": "ui", "to": "core", "type": "call", "timeout": true }]
+    ] },
+    { "id": "gone", "from": "ui", "to": "core", "type": "lost", "recovery": "resync" },
+    { "id": "resync", "from": "core", "to": "ui", "type": "signal" }
+  ]
+}

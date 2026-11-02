@@ -1,0 +1,1 @@
+{"kind":"flow","nodes":{"start":{"type":"start"},"check":{"type":"decision"},"done":{"type":"end"}},"edges":[{"from":"start","to":"check"},{"from":"check","to":"done","when":"valid"},{"from":"check","to":"done","when":"valid"}]}

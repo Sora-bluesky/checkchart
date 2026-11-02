@@ -1,0 +1,22 @@
+{
+  "kind": "architecture",
+  "direction": "LR",
+  "zones": {
+    "outer": { "untrusted": true },
+    "inner": { "parent": "outer" },
+    "workers": { "parent": "inner" }
+  },
+  "components": {
+    "first": { "zone": "workers" },
+    "second": { "zone": "workers" },
+    "innerHelper": { "zone": "inner" },
+    "outerHelper": { "zone": "outer" },
+    "outside": {}
+  },
+  "connections": [
+    { "from": "outside", "to": "outerHelper" },
+    { "from": "outerHelper", "to": "innerHelper" },
+    { "from": "innerHelper", "to": "first" },
+    { "from": "first", "to": "second" }
+  ]
+}

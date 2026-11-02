@@ -1,0 +1,22 @@
+{
+  "kind": "architecture",
+  "direction": "TB",
+  "zones": { "remote": { "untrusted": true } },
+  "components": {
+    "screen": {}, "bridge": {}, "command": {}, "core": {},
+    "store": { "shape": "store" }, "adapter": {}, "worker": {},
+    "remote": { "zone": "remote" }, "audit": {}
+  },
+  "connections": [
+    { "from": "screen", "to": "bridge" },
+    { "from": "bridge", "to": "core" },
+    { "from": "command", "to": "core" },
+    { "from": "core", "to": "store" },
+    { "from": "core", "to": "adapter" },
+    { "from": "adapter", "to": "worker" },
+    { "from": "worker", "to": "adapter" },
+    { "from": "core", "to": "audit" },
+    { "from": "core", "to": "remote" },
+    { "from": "bridge", "to": "remote", "style": "dashed" }
+  ]
+}

@@ -1,0 +1,31 @@
+---
+title: "acme saves a form"
+---
+flowchart TB
+  subgraph legend["Legend"]
+    direction LR
+    lg0["Input"]
+    lg1["Work"]
+    lg2["Storage"]
+    lg3["Result"]
+    lg0 ~~~ lg1 ~~~ lg2 ~~~ lg3
+  end
+  class lg0 blue
+  class lg1 teal
+  class lg2 purple
+  class lg3 tan
+  n0(["You submit a form"])
+  n1{"Is the form valid?"}
+  n2["Save the form"]
+  n3[("Saved forms")]
+  n4(["You see the result"])
+  n0 --> n1
+  n1 -->|"The form is valid"| n2
+  n1 -->|"The form needs a change"| n4
+  n2 -.->|"Writes the form"| n3
+  n2 --> n4
+  class n0 blue
+  class n1 teal
+  class n2 teal
+  class n3 purple
+  class n4 tan

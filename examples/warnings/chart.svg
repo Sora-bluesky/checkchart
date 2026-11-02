@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="752.00" height="674.00" viewBox="0.00 0.00 752.00 674.00" role="img" aria-labelledby="chart-title">
+<title id="chart-title">acme request processing</title>
+<style>
+svg {
+  --font-family: "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", "Segoe UI", sans-serif;
+  --canvas: #ffffff; --text: #232830; --edge-text: #2f353d; --line: #4b525d;
+  --node-fill: #ffffff; --node-stroke: #4b525d;
+  --teal-fill: #b9f5ee; --teal-stroke: #008674;
+  --blue-fill: #d0e5ff; --blue-stroke: #0772e6;
+  --orange-fill: #ffdea7; --orange-stroke: #ec5a00;
+  --green-fill: #c4f7c9; --green-stroke: #008b06;
+  --purple-fill: #e6dcff; --purple-stroke: #6b3fd4;
+  --tan-fill: #ece6dd; --tan-stroke: #7a6a55;
+  --pink-fill: #ffd9ec; --pink-stroke: #c4247a;
+  --yellow-fill: #fff1b8; --yellow-stroke: #b38600;
+  --zone-fill: #f6f7f9; --zone-header: #e8ebef; --zone-stroke: #9aa1ab;
+  --break-fill: #ffe3e5; --break-stroke: #d6141f; --break-text: #b0101a;
+  --note-fill: #fff4c2; --note-stroke: #c9a400;
+  font-family: var(--font-family);
+  font-size: 16px; line-height: 1.4; color: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+  svg {
+    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #f5f5f5; --line: #a0a6b0;
+    --node-fill: #292c31; --node-stroke: #a0a6b0;
+    --teal-fill: #174b45; --teal-stroke: #58d8c7;
+    --blue-fill: #183e66; --blue-stroke: #6bb1ff;
+    --orange-fill: #633b1a; --orange-stroke: #ffa451;
+    --green-fill: #214e27; --green-stroke: #62d86a;
+    --purple-fill: #3c295f; --purple-stroke: #b69aff;
+    --tan-fill: #494034; --tan-stroke: #c3af94;
+    --pink-fill: #60213f; --pink-stroke: #f783bc;
+    --yellow-fill: #594b1a; --yellow-stroke: #e2c65c;
+    --zone-fill: #272a30; --zone-header: #343840; --zone-stroke: #8d95a1;
+    --break-fill: #5c2028; --break-stroke: #ff7180; --break-text: #ffb0b8;
+    --note-fill: #544819; --note-stroke: #ddc257;
+  }
+}
+.canvas, .pill, .legend-body { fill: var(--canvas); }
+text { fill: var(--text); stroke: none; }
+.center { text-anchor: middle; }
+.title { font-size: 22px; font-weight: 700; }
+.header { font-size: 15px; font-weight: 700; }
+.edge-label, .branch-label { font-size: 15px; fill: var(--text); }
+.legend-label { font-size: 14px; }
+.legend-heading { font-weight: 700; }
+.blue { --fill: var(--blue-fill); --stroke: var(--blue-stroke); }
+.orange { --fill: var(--orange-fill); --stroke: var(--orange-stroke); }
+.green { --fill: var(--green-fill); --stroke: var(--green-stroke); }
+.purple { --fill: var(--purple-fill); --stroke: var(--purple-stroke); }
+.yellow { --fill: var(--yellow-fill); --stroke: var(--yellow-stroke); }
+.teal { --fill: var(--teal-fill); --stroke: var(--teal-stroke); }
+.tan { --fill: var(--tan-fill); --stroke: var(--tan-stroke); }
+.pink { --fill: var(--pink-fill); --stroke: var(--pink-stroke); }
+.shape, .swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 2.5px; }
+.external .shape { stroke-dasharray: 6 4; }
+.bugPath { --stroke: var(--blue-stroke); }
+.bugPath .shape, .bugPath.swatch { stroke-width: 3.5px; }
+.breaks { --fill: var(--break-fill); --stroke: var(--break-stroke); }
+.breaks .shape, .breaks.swatch { stroke-width: 3.5px; }
+.breaks text, .break-note text { fill: var(--break-text); }
+.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 2px; stroke-linejoin: round; }
+.dashed .edge { stroke-dasharray: 6 4; }
+.arrow-filled { fill: var(--connector, var(--line)); stroke: none; }
+.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 2px; }
+.trust-break { --connector: var(--break-stroke); }
+.trust-break .edge { stroke-width: 2.5px; }
+.container-body { fill: var(--zone-fill); stroke: var(--zone-stroke); stroke-width: 1.5px; }
+.container-header { fill: var(--zone-header); stroke: var(--zone-stroke); stroke-width: 1.5px; }
+.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 2px; stroke-dasharray: 6 4; }
+.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 3.5px; }
+.container.breaks .container-header { fill: var(--break-fill); }
+.group .container-body { fill: var(--fill); fill-opacity: 0.12; stroke: var(--stroke); stroke-opacity: 0.6; stroke-width: 1.5px; }
+.group .container-header { fill: var(--fill); fill-opacity: 1; }
+.lock { fill: none; stroke: var(--text); stroke-width: 1.5px; }
+.lock-body { fill: var(--text); stroke: none; }
+.lifeline { stroke: var(--zone-stroke); stroke-width: 1.5px; stroke-dasharray: 6 4; }
+.frame { fill: none; stroke: var(--zone-stroke); stroke-width: 1.5px; }
+.frame-tab { fill: var(--zone-header); stroke: var(--zone-stroke); stroke-width: 1.5px; }
+.branch-divider { stroke: var(--zone-stroke); stroke-width: 1.5px; stroke-dasharray: 6 4; }
+.note-shape { fill: var(--note-fill); stroke: var(--note-stroke); stroke-width: 1.5px; }
+.break-note .note-shape { fill: var(--break-fill); stroke: var(--break-stroke); }
+.break-band { fill: var(--break-fill); }
+.legend-body { stroke: var(--zone-stroke); stroke-width: 1px; }
+</style>
+<rect class="canvas" x="0.00" y="0.00" width="752.00" height="674.00"/>
+<text class="title" data-text="24.00 24.00 322.00 30.80"><tspan x="24.00" y="46.00" font-weight="700">acme request processing</tspan></text>
+<g id="legend" data-legend="588.00 24.00 140.00 128.80">
+<rect class="legend-body" x="588.00" y="24.00" width="140.00" height="128.80"/>
+<text class="legend-label legend-heading" data-text="600.00 32.00 60.00 19.60"><tspan x="600.00" y="46.00" font-weight="700">Legend</tspan></text>
+<rect class="swatch blue" x="600.00" y="61.80" width="16.00" height="12.00"/>
+<text class="legend-label" data-text="628.00 58.00 43.00 19.60"><tspan x="628.00" y="72.00" font-weight="400">Entry</tspan></text>
+<rect class="swatch teal" x="600.00" y="91.40" width="16.00" height="12.00"/>
+<text class="legend-label" data-text="628.00 87.60 40.00 19.60"><tspan x="628.00" y="101.60" font-weight="400">Work</tspan></text>
+<rect class="swatch purple" x="600.00" y="121.00" width="16.00" height="12.00"/>
+<text class="legend-label" data-text="628.00 117.20 63.00 19.60"><tspan x="628.00" y="131.20" font-weight="400">Storage</tspan></text>
+</g>
+<g id="diagram" transform="translate(24.00 176.80)" data-diagram="24.00 176.80 704.00 473.20">
+<g id="container-z0" class="container " data-container="12.00 12.00 680.00 449.20" data-tab="12.00 12.00 177.00 29.00"><rect class="container-body" x="12.00" y="12.00" width="680.00" height="449.20"/><rect class="container-header" x="12.00" y="12.00" width="177.00" height="29.00"/><text class="header" data-text="24.00 16.00 153.00 21.00"><tspan x="24.00" y="31.00" font-weight="700">Service boundary</tspan></text></g>
+<g id="container-z1" class="container " data-container="28.00 158.00 648.00 287.20" data-tab="28.00 158.00 198.00 29.00"><rect class="container-body" x="28.00" y="158.00" width="648.00" height="287.20"/><rect class="container-header" x="28.00" y="158.00" width="198.00" height="29.00"/><circle data-port="e0 in NORTH 242.00,158.00" cx="242.00" cy="158.00" r="0.00"/><text class="header" data-text="40.00 162.00 174.00 21.00"><tspan x="40.00" y="177.00" font-weight="700">Application process</tspan></text></g>
+<g id="container-z2" class="container " data-container="83.00 304.00 577.00 125.20" data-tab="83.00 304.00 143.00 29.00"><rect class="container-body" x="83.00" y="304.00" width="577.00" height="125.20"/><rect class="container-header" x="83.00" y="304.00" width="143.00" height="29.00"/><circle data-port="e1 in NORTH 242.00,304.00" cx="242.00" cy="304.00" r="0.00"/><text class="header" data-text="95.00 308.00 119.00 21.00"><tspan x="95.00" y="323.00" font-weight="700">Worker group</tspan></text></g>
+<g id="edge-e0" class="edge-group" data-source="n0" data-target="n1"><path id="e0-s0" class="edge" data-points="242.00,113.00 242.00,158.00" d="M 242.00,113.00 L 242.00,158.00"/><polygon class="arrow-filled" points="242.00,113.00 246.00,123.00 238.00,123.00"/><path id="e0-s1" class="edge" data-points="242.00,158.00 242.00,203.00" d="M 242.00,158.00 L 242.00,203.00"/><polygon class="arrow-filled" points="242.00,203.00 238.00,193.00 246.00,193.00"/></g>
+<g id="edge-e1" class="edge-group" data-source="n1" data-target="n2"><path id="e1-s0" class="edge" data-points="242.00,259.00 242.00,304.00" d="M 242.00,259.00 L 242.00,304.00"/><path id="e1-s1" class="edge" data-points="242.00,304.00 242.00,352.20" d="M 242.00,304.00 L 242.00,352.20"/><polygon class="arrow-filled" points="242.00,352.20 238.00,342.20 246.00,342.20"/></g>
+<g id="edge-e2" class="edge-group" data-source="n2" data-target="n3"><path id="e2-s0" class="edge" data-points="329.00,380.20 501.00,380.20" d="M 329.00,380.20 L 501.00,380.20"/><polygon class="arrow-filled" points="501.00,380.20 491.00,384.20 491.00,376.20"/></g>
+<g id="node-n2" class="node box teal" data-node="155.00 352.20 174.00 56.00"><rect class="shape" x="155.00" y="352.20" width="174.00" height="56.00"/><text class="center" data-text="208.50 369.00 67.00 22.40"><tspan x="242.00" y="385.00" font-weight="700">Worker</tspan></text></g>
+<g id="node-n3" class="node store purple" data-node="501.00 349.00 143.00 62.40"><path class="shape" d="M 501.00,357.00 A 71.50,8.00 0 0 1 644.00,357.00 L 644.00,403.40 A 71.50,8.00 0 0 1 501.00,403.40 Z M 501.00,357.00 A 71.50,8.00 0 0 0 644.00,357.00"/><text class="center" data-text="517.00 369.00 111.00 22.40"><tspan x="572.50" y="385.00" font-weight="700">Stored data</tspan></text></g>
+<g id="node-n1" class="node box teal" data-node="155.00 203.00 174.00 56.00"><rect class="shape" x="155.00" y="203.00" width="174.00" height="56.00"/><text class="center" data-text="171.00 219.80 142.00 22.40"><tspan x="242.00" y="235.80" font-weight="700">Request router</tspan></text></g>
+<g id="node-n0" class="node box blue" data-node="155.00 57.00 174.00 56.00"><rect class="shape" x="155.00" y="57.00" width="174.00" height="56.00"/><text class="center" data-text="214.00 73.80 56.00 22.40"><tspan x="242.00" y="89.80" font-weight="700">Client</tspan></text></g>
+<g id="label-e0-label" data-pill="179.00 121.00 59.00 29.00"><rect class="pill" x="179.00" y="121.00" width="59.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="185.00 125.00 47.00 21.00"><tspan x="208.50" y="140.00" font-weight="400">Uses.</tspan></text></g>
+<g id="label-e1-label" data-pill="56.00 267.00 182.00 29.00"><rect class="pill" x="56.00" y="267.00" width="182.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="62.00 271.00 170.00 21.00"><tspan x="147.00" y="286.00" font-weight="400">Queues a work item</tspan></text></g>
+<g id="label-e2-label" data-pill="337.00 347.20 156.00 29.00"><rect class="pill" x="337.00" y="347.20" width="156.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="343.00 351.20 144.00 21.00"><tspan x="415.00" y="366.20" font-weight="400">Writes the result</tspan></text></g>
+</g>
+</svg>

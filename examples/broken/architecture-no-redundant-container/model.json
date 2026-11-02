@@ -1,0 +1,1 @@
+{"kind":"architecture","zones":{"outer":{},"inner":{"parent":"outer"}},"components":{"screen":{"zone":"inner"},"core":{"zone":"inner"}},"connections":[{"from":"screen","to":"core"}]}

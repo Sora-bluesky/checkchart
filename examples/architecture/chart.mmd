@@ -1,0 +1,38 @@
+---
+title: "acme connections"
+---
+flowchart LR
+  subgraph legend["Legend"]
+    direction LR
+    lg0["People"]
+    lg1["Application"]
+    lg2["Storage"]
+    lg3["Outside"]
+    lg4["Untrusted content"]
+    lg0 ~~~ lg1 ~~~ lg2 ~~~ lg3 ~~~ lg4
+  end
+  class lg0 tan
+  class lg1 teal
+  class lg2 purple
+  class lg3 orange
+  class lg4 untrusted
+  subgraph z0["Your machine"]
+    subgraph z1["Application process"]
+      n1["acme"]
+    end
+    n2[("Saved data")]
+  end
+  subgraph z2["Remote service"]
+    n3[/"Remote endpoint"/]
+  end
+  n0(["You"])
+  n0 -->|"Submits a request"| n1
+  n1 <-->|"Reads and writes data"| n2
+  n1 -.->|"Requests a result"| n3
+  n3 -.->|"Returns a result"| n1
+  classDef untrusted fill:#f6f7f9,stroke:#4b525d,stroke-width:2px,stroke-dasharray:6 4
+  class z2 untrusted
+  class n0 tan
+  class n1 teal
+  class n2 purple
+  class n3 orange

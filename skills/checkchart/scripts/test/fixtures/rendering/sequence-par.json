@@ -1,0 +1,30 @@
+{
+  "kind": "sequence",
+  "participants": [
+    "worker"
+  ],
+  "messages": [
+    {
+      "branches": [
+        "first",
+        "second"
+      ],
+      "par": [
+        [
+          {
+            "from": "worker",
+            "to": "worker",
+            "type": "self"
+          }
+        ],
+        [
+          {
+            "from": "worker",
+            "to": "worker",
+            "type": "self"
+          }
+        ]
+      ]
+    }
+  ]
+}

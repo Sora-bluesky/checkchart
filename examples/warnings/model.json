@@ -1,0 +1,20 @@
+{
+  "kind": "architecture",
+  "direction": "LR",
+  "zones": {
+    "outer": {},
+    "inner": { "parent": "outer" },
+    "leaf": { "parent": "inner" }
+  },
+  "components": {
+    "client": { "zone": "outer", "level": "context" },
+    "router": { "zone": "inner", "level": "component" },
+    "worker": { "zone": "leaf", "level": "component" },
+    "store": { "zone": "leaf", "shape": "store", "level": "component" }
+  },
+  "connections": [
+    { "from": "client", "to": "router", "dir": "both" },
+    { "from": "router", "to": "worker" },
+    { "from": "worker", "to": "store" }
+  ]
+}

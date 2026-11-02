@@ -1,0 +1,16 @@
+{
+  "kind": "architecture",
+  "direction": "TB",
+  "zones": {
+    "workers": {}
+  },
+  "components": {
+    "first": { "zone": "workers" },
+    "second": { "zone": "workers" },
+    "outside": {}
+  },
+  "connections": [
+    { "from": "outside", "to": "first" },
+    { "from": "first", "to": "second" }
+  ]
+}

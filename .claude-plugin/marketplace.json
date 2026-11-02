@@ -1,0 +1,11 @@
+{
+  "name": "checkchart",
+  "owner": { "name": "Sora-bluesky" },
+  "plugins": [
+    {
+      "name": "checkchart",
+      "source": "./",
+      "description": "Check the facts of flowcharts, sequence diagrams and architecture diagrams before drawing them as Mermaid."
+    }
+  ]
+}

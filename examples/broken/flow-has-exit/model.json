@@ -1,0 +1,1 @@
+{"kind":"flow","nodes":{"start":{"type":"start"},"save":{},"db":{"type":"store"},"done":{"type":"end"}},"edges":[{"from":"start","to":"done"},{"from":"start","to":"save"},{"from":"save","to":"db"}]}

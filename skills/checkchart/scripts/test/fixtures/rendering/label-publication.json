@@ -1,0 +1,36 @@
+{
+  "kind": "architecture",
+  "direction": "TB",
+  "zones": {
+    "z0": {}
+  },
+  "components": {
+    "c0": {
+      "zone": "z0"
+    },
+    "c1": {
+      "zone": "z0"
+    },
+    "c2": {},
+    "c3": {
+      "zone": "z0"
+    }
+  },
+  "connections": [
+    {
+      "id": "e1",
+      "from": "c1",
+      "to": "c2"
+    },
+    {
+      "id": "e2",
+      "from": "c1",
+      "to": "c3"
+    },
+    {
+      "id": "e3",
+      "from": "c0",
+      "to": "c3"
+    }
+  ]
+}

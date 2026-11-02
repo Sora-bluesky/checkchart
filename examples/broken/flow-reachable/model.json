@@ -1,0 +1,1 @@
+{"kind":"flow","nodes":{"start":{"type":"start"},"done":{"type":"end"},"alone":{}},"edges":[{"from":"start","to":"done"},{"from":"alone","to":"done"}]}

@@ -1,0 +1,21 @@
+{
+  "kind": "architecture",
+  "direction": "LR",
+  "zones": {
+    "machine": {},
+    "app": { "parent": "machine" },
+    "web": { "untrusted": true }
+  },
+  "components": {
+    "user": { "shape": "person" },
+    "app": { "zone": "app" },
+    "db": { "zone": "machine", "shape": "store" },
+    "api": { "zone": "web", "shape": "external" }
+  },
+  "connections": [
+    { "from": "user", "to": "app", "checkedBy": "app" },
+    { "from": "app", "to": "db", "dir": "both" },
+    { "from": "app", "to": "api", "style": "dashed" },
+    { "from": "api", "to": "app", "style": "dashed", "checkedBy": "app" }
+  ]
+}
