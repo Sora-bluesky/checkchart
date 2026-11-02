@@ -162,15 +162,15 @@ test("sequence labels wrap at the width cap and self labels stay within 260px", 
   if (model.kind !== "sequence") return;
   const scene = sequenceScene(model, answers, check);
   const text = scene.edges[0].labels[0].text;
-  assert.equal(text.fontSize, 15);
+  assert.equal(text.fontSize, 13);
   assert.ok(text.lines.length > 1);
   assert.equal(text.lines.join(" "), spanning);
-  assert.ok(text.lines.every((line) => textWidth(line, 15) <= 240));
+  assert.ok(text.lines.every((line) => textWidth(line, 13, 400, "mono") <= 240));
   assert.deepEqual(scene.edges[1].labels[0].text.lines, [label]);
   assert.ok(scene.edges[1].labels[0].box.width <= 260);
 });
 
-test("sequence groups have light bodies, full-tone headers and enough room for the group name", () => {
+test("sequence groups have light bodies, inset headers and enough room for the group name", () => {
   const group = "通知を検証する領域\n復旧処理のための情報を保持する";
   const { model, answers, check } = prepared(simpleSequence, { colors: { [group]: "teal" }, group: () => group });
   if (model.kind !== "sequence") return;
@@ -179,7 +179,7 @@ test("sequence groups have light bodies, full-tone headers and enough room for t
   assert.ok(container.text.width + 24 + 48 <= container.box.width + 0.01);
   assert.ok(scene.nodes[0].box.y >= container.headerHeight + 12);
   assert.match(style, /\.group \.container-body \{[^}]*fill-opacity: 0\.12;[^}]*stroke-opacity: 0\.6;[^}]*stroke-width: 1\.5px;/);
-  assert.match(style, /\.group \.container-header \{[^}]*fill-opacity: 1;/);
+  assert.match(style, /\.container-header \{ fill: none; stroke: none;/);
 });
 
 test("nested parallel frames contain their text; break bands span only the involved lifelines", () => {

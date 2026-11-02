@@ -4,7 +4,7 @@ import {
 } from "../../ir.ts";
 import { ruleNames, sequenceMarks } from "../presentation.ts";
 import { emptyScene, type Note, type SvgNode } from "./scene.ts";
-import { fontSize, headerHeight, textBlock, widthBudget } from "./text.ts";
+import { edgeLabelBlock, fontSize, headerHeight, textBlock, widthBudget } from "./text.ts";
 import { routeTextObstacles } from "./obstacles.ts";
 
 export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
@@ -20,7 +20,7 @@ export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
     .filter((message) => message.type !== "note" && message.from === id && message.to === id)
     // Self arrows extend 24px; their centered pill needs only its right half,
     // rather than the old full-label reservation for a 136px loop.
-    .map((message) => Math.max(24, (textBlock(stepOf(answers, message) ?? "", 240, fontSize.label).width + 12) / 2 + 12) + 12 - widths.get(id)! / 2))]));
+    .map((message) => Math.max(24, (edgeLabelBlock(stepOf(answers, message) ?? "").width + 12) / 2 + 12) + 12 - widths.get(id)! / 2))]));
   const groupSpace = new Map<string, number>();
   for (const group of new Set(order.map((id) => answers.groups.get(keyOf({ kind: "participant", id }))))) {
     if (group === undefined) continue;
@@ -100,7 +100,7 @@ export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
       const from = centers.get(message.from) ?? target;
       // An invalid self message still shows its declared endpoints, like Mermaid.
       const loop = from === target;
-      const text = textBlock(stepOf(answers, message) ?? "", 240, fontSize.label);
+      const text = edgeLabelBlock(stepOf(answers, message) ?? "");
       const loopWidth = 24, loopHeight = 60;
       const box = { x: (loop ? from + loopWidth / 2 : (from + target) / 2) - (text.width + 12) / 2, y: cursor, width: text.width + 12, height: text.height + 8 };
       const lineY = cursor + box.height + 6;
@@ -129,7 +129,7 @@ export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
       cursor += 30;
       for (const [index, branch] of item.par.entries()) {
         const name = item.branches === undefined ? `Branch ${index + 1}` : answers.branchLabels.get(branch) ?? item.branches[index];
-        const text = textBlock(`[${name}]`, 240, fontSize.label);
+        const text = edgeLabelBlock(`[${name}]`);
         frame.branches.push({ y: cursor, text });
         cursor += text.height + 14;
         draw(branch);

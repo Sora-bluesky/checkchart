@@ -44,7 +44,7 @@ export const step = () => "Sends the request data";
 
 - `title`, `reader`, `question`: strings, each non-empty for `PurposeStated`. Missing the view breaks this rule. Reader and question appear only at the top of the report, never in the drawing.
 - `product`: optional exact product spelling, such as `acme`. `ProductName` checks its case in drawn titles, labels, arrow labels and used group names. The name must appear in the title or an element label. It matches without adjacent ASCII letters or digits; CJK neighbors are allowed.
-- `label(id, kind, fact)`: a string, or use an object from id to string. Missing map entries use the id. Kinds are `node`, `participant`, `component`, `zone`, `branch`. Use `\n` for a hard line break. Prefer verb plus noun for flow steps and name plus role for components.
+- `label(id, kind, fact)`: a string, or use an object from id to string. Missing map entries use the id. Kinds are `node`, `participant`, `component`, `zone`, `branch`. Use `\n` for a hard line break. Prefer verb plus noun for flow steps and name plus role for components. In SVG nodes, the first authored line is the bold name (including its automatic wraps); subsequent authored lines are smaller, muted monospace details.
 - `group(id, kind, fact)`: a group name or `undefined`, or use an object from id to group. It colors nodes, components and participants, and requires `colors`.
 - `colors`: group names mapped to `blue`, `orange`, `purple`, `yellow`, `teal`, `tan` or `pink`. Give color one consistent meaning; group names also appear as text.
 - `step(arrow)`: the action or data exchanged, expressed in the reader's words. It receives the edge, connection or message, including its optional `id`. For sequences, notes also pass through it. It runs once per item; the report and both drawings reuse the answer.
@@ -63,6 +63,8 @@ Use ids matching `^[A-Za-z][A-Za-z0-9_]*$`. Unknown keys are errors. Facts belon
 
 Direction defaults to `TB`, or use `TD`, `LR`, `RL`, `BT`. Node type defaults to `step`, or use `start`, `decision`, `store`, `end`. Edge style defaults to `solid`, or use `dashed`. `when` is a condition id. Optional edge ids must be unique among edges.
 
+Use `"style":"dashed"` on flow edges or architecture connections for deploy, build, CI or publish relationships. SVG and Mermaid use only the model's style. Sequence replies retain their dashed lines and open arrowheads.
+
 - `HasStartAndEnd`: at least one start and one end.
 - `Reachable`: a start can reach every node.
 - `HasExit`: every non-end, non-store node has a way forward to a non-store node.
@@ -70,7 +72,7 @@ Direction defaults to `TB`, or use `TD`, `LR`, `RL`, `BT`. Node type defaults to
 - `DecisionBranches`: at least two outgoing edges per decision, each with a different `when`.
 - `EndIsFinal`: ends lead only to stores.
 
-A store is a side target, not a way forward. The SVG main path is the longest simple start-to-end path restricted to the first outgoing edge of each decision in model order. Condition ids do not imply success or failure. Main edges get high ELK straightness and direction priorities and centered ports. Declared node order is the main reading order used to count backward edges.
+A store is a side target, not a way forward. The SVG main path is the longest simple start-to-end path restricted to the first outgoing edge of each decision in model order. Condition ids do not imply success or failure. Main edges get blue connectors, high ELK straightness and direction priorities and centered ports. Architecture and sequence have no declared main path and keep neutral connectors; trust failures retain red. Declared node order is the main reading order used to count backward edges.
 
 ### Sequence
 

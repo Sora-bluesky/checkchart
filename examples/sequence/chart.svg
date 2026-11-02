@@ -2,9 +2,11 @@
 <title id="chart-title">acme receives requests</title>
 <style>
 svg {
-  --font-family: "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", "Segoe UI", sans-serif;
-  --canvas: #ffffff; --text: #232830; --edge-text: #2f353d; --line: #4b525d;
-  --node-fill: #ffffff; --node-stroke: #4b525d;
+  --font-family: "Arial", "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+  --font-mono: "BIZ UDGothic", "MS Gothic", monospace;
+  --canvas: #ffffff; --text: #232830; --edge-text: #556171; --line: #596370; --accent: #2563eb;
+  --node-fill: #ffffff; --node-stroke: #c7cdd5;
+  --tile-shadow: #0f172a0f;
   --teal-fill: #b9f5ee; --teal-stroke: #008674;
   --blue-fill: #d0e5ff; --blue-stroke: #0772e6;
   --orange-fill: #ffdea7; --orange-stroke: #ec5a00;
@@ -21,8 +23,9 @@ svg {
 }
 @media (prefers-color-scheme: dark) {
   svg {
-    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #f5f5f5; --line: #a0a6b0;
-    --node-fill: #292c31; --node-stroke: #a0a6b0;
+    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #bbc5d2; --line: #a0a6b0; --accent: #7eb0ff;
+    --node-fill: #292c31; --node-stroke: #667485;
+    --tile-shadow: #00000026;
     --teal-fill: #174b45; --teal-stroke: #58d8c7;
     --blue-fill: #183e66; --blue-stroke: #6bb1ff;
     --orange-fill: #633b1a; --orange-stroke: #ffa451;
@@ -41,7 +44,9 @@ text { fill: var(--text); stroke: none; }
 .center { text-anchor: middle; }
 .title { font-size: 22px; font-weight: 700; }
 .header { font-size: 15px; font-weight: 700; }
-.edge-label, .branch-label { font-size: 15px; fill: var(--text); }
+.edge-label, .branch-label { font-family: var(--font-mono); font-size: 13px; fill: var(--edge-text); }
+.mono { font-family: var(--font-mono); }
+.node .mono { fill: var(--edge-text); }
 .legend-label { font-size: 14px; }
 .legend-heading { font-weight: 700; }
 .blue { --fill: var(--blue-fill); --stroke: var(--blue-stroke); }
@@ -52,26 +57,26 @@ text { fill: var(--text); stroke: none; }
 .teal { --fill: var(--teal-fill); --stroke: var(--teal-stroke); }
 .tan { --fill: var(--tan-fill); --stroke: var(--tan-stroke); }
 .pink { --fill: var(--pink-fill); --stroke: var(--pink-stroke); }
-.shape, .swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 2.5px; }
+.shape { fill: var(--node-fill); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; filter: drop-shadow(0px 1px 1px var(--tile-shadow)); }
+.swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; }
 .external .shape { stroke-dasharray: 6 4; }
 .bugPath { --stroke: var(--blue-stroke); }
-.bugPath .shape, .bugPath.swatch { stroke-width: 3.5px; }
+.bugPath .shape, .bugPath.swatch { stroke-width: 1.5px; }
 .breaks { --fill: var(--break-fill); --stroke: var(--break-stroke); }
-.breaks .shape, .breaks.swatch { stroke-width: 3.5px; }
-.breaks text, .break-note text { fill: var(--break-text); }
-.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 2px; stroke-linejoin: round; }
-.dashed .edge { stroke-dasharray: 6 4; }
+.breaks .shape, .breaks.swatch { fill: var(--break-fill); stroke-width: 1.5px; }
+.breaks text, .breaks .mono, .break-note text { fill: var(--break-text); }
+.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; stroke-linejoin: round; }
+.dashed .edge { stroke-dasharray: 4 5; }
 .arrow-filled { fill: var(--connector, var(--line)); stroke: none; }
-.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 2px; }
+.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; }
+.primary { --connector: var(--accent); }
 .trust-break { --connector: var(--break-stroke); }
-.trust-break .edge { stroke-width: 2.5px; }
+.trust-break .edge { stroke-width: 1.5px; }
 .container-body { fill: var(--zone-fill); stroke: var(--zone-stroke); stroke-width: 1.5px; }
-.container-header { fill: var(--zone-header); stroke: var(--zone-stroke); stroke-width: 1.5px; }
-.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 2px; stroke-dasharray: 6 4; }
-.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 3.5px; }
-.container.breaks .container-header { fill: var(--break-fill); }
+.container-header { fill: none; stroke: none; }
+.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 1.5px; stroke-dasharray: 4 5; }
+.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 1.5px; }
 .group .container-body { fill: var(--fill); fill-opacity: 0.12; stroke: var(--stroke); stroke-opacity: 0.6; stroke-width: 1.5px; }
-.group .container-header { fill: var(--fill); fill-opacity: 1; }
 .lock { fill: none; stroke: var(--text); stroke-width: 1.5px; }
 .lock-body { fill: var(--text); stroke: none; }
 .lifeline { stroke: var(--zone-stroke); stroke-width: 1.5px; stroke-dasharray: 6 4; }
@@ -84,41 +89,41 @@ text { fill: var(--text); stroke: none; }
 .legend-body { stroke: var(--zone-stroke); stroke-width: 1px; }
 </style>
 <rect class="canvas" x="0.00" y="0.00" width="618.00" height="906.20"/>
-<text class="title" data-text="24.00 24.00 303.00 30.80"><tspan x="24.00" y="46.00" font-weight="700">acme receives requests</tspan></text>
+<text class="title" data-text="24.00 24.00 303.00 30.80"><tspan x="24.00" y="46.00" font-size="22" font-weight="700">acme receives requests</tspan></text>
 <g id="diagram" transform="translate(24.00 78.80)" data-diagram="24.00 78.80 570.00 803.40">
-<g id="container-group-1" class="container group teal" data-container="184.00 0.00 374.00 803.40" data-tab="184.00 0.00 89.00 29.00"><rect class="container-body" x="184.00" y="0.00" width="374.00" height="803.40"/><rect class="container-header" x="184.00" y="0.00" width="89.00" height="29.00"/><text class="header" data-text="196.00 4.00 65.00 21.00"><tspan x="196.00" y="19.00" font-weight="700">Service</tspan></text></g>
-<g id="container-group-0" class="container group blue" data-container="12.00 0.00 164.00 803.40" data-tab="12.00 0.00 86.00 29.00"><rect class="container-body" x="12.00" y="0.00" width="164.00" height="803.40"/><rect class="container-header" x="12.00" y="0.00" width="86.00" height="29.00"/><text class="header" data-text="24.00 4.00 62.00 21.00"><tspan x="24.00" y="19.00" font-weight="700">Screen</tspan></text></g>
+<g id="container-group-1" class="container group teal" data-container="184.00 0.00 374.00 803.40" data-tab="184.00 0.00 89.00 29.00"><rect class="container-body" x="184.00" y="0.00" width="374.00" height="803.40" rx="8.00"/><rect class="container-header" x="184.00" y="0.00" width="89.00" height="29.00"/><text class="header" data-text="196.00 8.00 65.00 21.00"><tspan x="196.00" y="23.00" font-size="15" font-weight="700">Service</tspan></text></g>
+<g id="container-group-0" class="container group blue" data-container="12.00 0.00 164.00 803.40" data-tab="12.00 0.00 86.00 29.00"><rect class="container-body" x="12.00" y="0.00" width="164.00" height="803.40" rx="8.00"/><rect class="container-header" x="12.00" y="0.00" width="86.00" height="29.00"/><text class="header" data-text="24.00 8.00 62.00 21.00"><tspan x="24.00" y="23.00" font-size="15" font-weight="700">Screen</tspan></text></g>
 <line class="lifeline" x1="94.00" x2="94.00" y1="93.00" y2="739.40"/>
 <line class="lifeline" x1="266.00" x2="266.00" y1="93.00" y2="739.40"/>
 <line class="lifeline" x1="438.00" x2="438.00" y1="93.00" y2="739.40"/>
 <g id="frame-par0">
 <rect class="frame" x="70.00" y="378.40" width="392.00" height="235.00"/>
 <path class="frame-tab" d="M 70.00,378.40 h 46.00 v 18.00 l -8.00,8.00 h -38.00 Z"/>
-<text class="header" data-text="79.00 382.40 30.00 21.00"><tspan x="79.00" y="397.40" font-weight="700">par</tspan></text>
-<text class="branch-label" data-text="82.00 408.40 151.00 21.00"><tspan x="82.00" y="423.40" font-weight="400">[Show the result]</tspan></text>
+<text class="header" data-text="79.00 382.40 30.00 21.00"><tspan x="79.00" y="397.40" font-size="15" font-weight="700">par</tspan></text>
+<text class="branch-label" data-text="82.00 408.40 151.00 21.00"><tspan class="mono" x="82.00" y="421.40" font-size="13" font-weight="400">[Show the result]</tspan></text>
 <line class="branch-divider" x1="70.00" x2="462.00" y1="494.40" y2="494.40"/>
-<text class="branch-label" data-text="82.00 500.40 230.00 21.00"><tspan x="82.00" y="515.40" font-weight="400">[Acknowledge the update]</tspan></text>
+<text class="branch-label" data-text="82.00 500.40 230.00 21.00"><tspan class="mono" x="82.00" y="513.40" font-size="13" font-weight="400">[Acknowledge the update]</tspan></text>
 </g>
-<g id="edge-m0" class="edge-group"><path id="m0-s0" class="edge" data-points="266.00,156.00 438.00,156.00" d="M 266.00,156.00 L 438.00,156.00"/><polygon class="arrow-filled" points="438.00,156.00 428.00,160.00 428.00,152.00"/></g>
-<g id="edge-m1" class="edge-group dashed"><path id="m1-s0" class="edge" data-points="438.00,201.00 266.00,201.00" d="M 438.00,201.00 L 266.00,201.00"/><path class="arrow-open" d="M 276.00,197.00 L 266.00,201.00 L 276.00,205.00"/></g>
-<g id="edge-m2" class="edge-group"><path id="m2-s0" class="edge" data-points="438.00,246.00 462.00,246.00 462.00,306.00 438.00,306.00" d="M 438.00,246.00 L 458.00,246.00 Q 462.00,246.00 462.00,250.00 L 462.00,302.00 Q 462.00,306.00 458.00,306.00 L 438.00,306.00"/><polygon class="arrow-filled" points="438.00,306.00 448.00,302.00 448.00,310.00"/></g>
-<g id="edge-m4" class="edge-group"><path id="m4-s0" class="edge" data-points="438.00,478.40 94.00,478.40" d="M 438.00,478.40 L 94.00,478.40"/><path class="arrow-open" d="M 104.00,474.40 L 94.00,478.40 L 104.00,482.40"/></g>
-<g id="edge-m5" class="edge-group"><path id="m5-s0" class="edge" data-points="94.00,591.40 438.00,591.40" d="M 94.00,591.40 L 438.00,591.40"/><polygon class="arrow-filled" points="438.00,591.40 428.00,595.40 428.00,587.40"/></g>
+<g id="edge-m0" class="edge-group"><path id="m0-s0" class="edge" data-points="266.00,156.00 438.00,156.00" d="M 266.00,156.00 L 428.00,156.00"/><polygon class="arrow-filled" points="438.00,156.00 428.00,161.00 428.00,151.00"/></g>
+<g id="edge-m1" class="edge-group dashed"><path id="m1-s0" class="edge" data-points="438.00,201.00 266.00,201.00" d="M 438.00,201.00 L 276.00,201.00"/><path class="arrow-open" d="M 276.00,196.00 L 266.00,201.00 L 276.00,206.00"/></g>
+<g id="edge-m2" class="edge-group"><path id="m2-s0" class="edge" data-points="438.00,246.00 462.00,246.00 462.00,306.00 438.00,306.00" d="M 438.00,246.00 L 458.00,246.00 Q 462.00,246.00 462.00,250.00 L 462.00,302.00 Q 462.00,306.00 458.00,306.00 L 448.00,306.00"/><polygon class="arrow-filled" points="438.00,306.00 448.00,301.00 448.00,311.00"/></g>
+<g id="edge-m4" class="edge-group"><path id="m4-s0" class="edge" data-points="438.00,478.40 94.00,478.40" d="M 438.00,478.40 L 104.00,478.40"/><path class="arrow-open" d="M 104.00,473.40 L 94.00,478.40 L 104.00,483.40"/></g>
+<g id="edge-m5" class="edge-group"><path id="m5-s0" class="edge" data-points="94.00,591.40 438.00,591.40" d="M 94.00,591.40 L 428.00,591.40"/><polygon class="arrow-filled" points="438.00,591.40 428.00,596.40 428.00,586.40"/></g>
 <g id="edge-m6" class="edge-group"><path id="m6-s0" class="edge" data-points="94.00,664.40 424.00,664.40" d="M 94.00,664.40 L 424.00,664.40"/><path class="lost" d="M 419.00,659.40 L 429.00,669.40 M 429.00,659.40 L 419.00,669.40"/></g>
-<g id="edge-m7" class="edge-group"><path id="m7-s0" class="edge" data-points="438.00,709.40 94.00,709.40" d="M 438.00,709.40 L 94.00,709.40"/><path class="arrow-open" d="M 104.00,705.40 L 94.00,709.40 L 104.00,713.40"/></g>
-<g id="node-p0" class="node box blue" data-node="24.00 41.00 140.00 52.00"><rect class="shape" x="24.00" y="41.00" width="140.00" height="52.00"/><text class="center" data-text="76.00 55.80 36.00 22.40"><tspan x="94.00" y="71.80" font-weight="700">You</tspan></text></g>
-<g id="node-p1" class="node box teal" data-node="196.00 41.00 140.00 52.00"><rect class="shape" x="196.00" y="41.00" width="140.00" height="52.00"/><text class="center" data-text="212.50 55.80 107.00 22.40"><tspan x="266.00" y="71.80" font-weight="700">Application</tspan></text></g>
-<g id="node-p2" class="node box teal" data-node="368.00 41.00 140.00 52.00"><rect class="shape" x="368.00" y="41.00" width="140.00" height="52.00"/><text class="center" data-text="404.50 55.80 67.00 22.40"><tspan x="438.00" y="71.80" font-weight="700">Worker</tspan></text></g>
-<g id="node-p0-footer" class="node box blue" data-node="24.00 739.40 140.00 52.00"><rect class="shape" x="24.00" y="739.40" width="140.00" height="52.00"/><text class="center" data-text="76.00 754.20 36.00 22.40"><tspan x="94.00" y="770.20" font-weight="700">You</tspan></text></g>
-<g id="node-p1-footer" class="node box teal" data-node="196.00 739.40 140.00 52.00"><rect class="shape" x="196.00" y="739.40" width="140.00" height="52.00"/><text class="center" data-text="212.50 754.20 107.00 22.40"><tspan x="266.00" y="770.20" font-weight="700">Application</tspan></text></g>
-<g id="node-p2-footer" class="node box teal" data-node="368.00 739.40 140.00 52.00"><rect class="shape" x="368.00" y="739.40" width="140.00" height="52.00"/><text class="center" data-text="404.50 754.20 67.00 22.40"><tspan x="438.00" y="770.20" font-weight="700">Worker</tspan></text></g>
-<g id="note-note-3" class="note" data-note="250.50 316.00 203.00 46.40"><path class="note-shape" d="M 250.50,316.00 H 443.50 L 453.50,326.00 V 362.40 H 250.50 Z M 443.50,316.00 V 326.00 H 453.50"/><text class="center" data-text="266.50 328.00 171.00 22.40"><tspan x="352.00" y="344.00" font-weight="400">The result is ready</tspan></text></g>
-<g id="label-m0-label" data-pill="266.00 121.00 172.00 29.00"><rect class="pill" x="266.00" y="121.00" width="172.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="272.00 125.00 160.00 21.00"><tspan x="352.00" y="140.00" font-weight="400">Asks for the result</tspan></text></g>
-<g id="label-m1-label" data-pill="267.50 166.00 169.00 29.00"><rect class="pill" x="267.50" y="166.00" width="169.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="273.50 170.00 157.00 21.00"><tspan x="352.00" y="185.00" font-weight="400">Returns the result</tspan></text></g>
-<g id="label-m2-label" data-pill="366.00 211.00 168.00 29.00"><rect class="pill" x="366.00" y="211.00" width="168.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="372.00 215.00 156.00 21.00"><tspan x="450.00" y="230.00" font-weight="400">Updates its cache</tspan></text></g>
-<g id="label-m4-label" data-pill="187.50 443.40 157.00 29.00"><rect class="pill" x="187.50" y="443.40" width="157.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="193.50 447.40 145.00 21.00"><tspan x="266.00" y="462.40" font-weight="400">Shows the result</tspan></text></g>
-<g id="label-m5-label" data-pill="196.00 535.40 140.00 50.00"><rect class="pill" x="196.00" y="535.40" width="140.00" height="50.00" rx="4.00"/><text class="center edge-label" data-text="202.00 539.40 128.00 42.00"><tspan x="266.00" y="554.40" font-weight="400">Acknowledges,</tspan><tspan x="266.00" y="575.40" font-weight="400">with a timeout</tspan></text></g>
-<g id="label-m6-label" data-pill="182.50 629.40 167.00 29.00"><rect class="pill" x="182.50" y="629.40" width="167.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="188.50 633.40 155.00 21.00"><tspan x="266.00" y="648.40" font-weight="400">The update is lost</tspan></text></g>
-<g id="label-m7-label" data-pill="177.50 674.40 177.00 29.00"><rect class="pill" x="177.50" y="674.40" width="177.00" height="29.00" rx="4.00"/><text class="center edge-label" data-text="183.50 678.40 165.00 21.00"><tspan x="266.00" y="693.40" font-weight="400">Sends a fresh copy</tspan></text></g>
+<g id="edge-m7" class="edge-group"><path id="m7-s0" class="edge" data-points="438.00,709.40 94.00,709.40" d="M 438.00,709.40 L 104.00,709.40"/><path class="arrow-open" d="M 104.00,704.40 L 94.00,709.40 L 104.00,714.40"/></g>
+<g id="node-p0" class="node box blue" data-node="24.00 41.00 140.00 52.00"><rect class="shape" x="24.00" y="41.00" width="140.00" height="52.00" rx="6.00"/><text class="center" data-text="76.00 55.80 36.00 22.40"><tspan x="94.00" y="71.80" font-size="16" font-weight="700">You</tspan></text></g>
+<g id="node-p1" class="node box teal" data-node="196.00 41.00 140.00 52.00"><rect class="shape" x="196.00" y="41.00" width="140.00" height="52.00" rx="6.00"/><text class="center" data-text="212.50 55.80 107.00 22.40"><tspan x="266.00" y="71.80" font-size="16" font-weight="700">Application</tspan></text></g>
+<g id="node-p2" class="node box teal" data-node="368.00 41.00 140.00 52.00"><rect class="shape" x="368.00" y="41.00" width="140.00" height="52.00" rx="6.00"/><text class="center" data-text="404.50 55.80 67.00 22.40"><tspan x="438.00" y="71.80" font-size="16" font-weight="700">Worker</tspan></text></g>
+<g id="node-p0-footer" class="node box blue" data-node="24.00 739.40 140.00 52.00"><rect class="shape" x="24.00" y="739.40" width="140.00" height="52.00" rx="6.00"/><text class="center" data-text="76.00 754.20 36.00 22.40"><tspan x="94.00" y="770.20" font-size="16" font-weight="700">You</tspan></text></g>
+<g id="node-p1-footer" class="node box teal" data-node="196.00 739.40 140.00 52.00"><rect class="shape" x="196.00" y="739.40" width="140.00" height="52.00" rx="6.00"/><text class="center" data-text="212.50 754.20 107.00 22.40"><tspan x="266.00" y="770.20" font-size="16" font-weight="700">Application</tspan></text></g>
+<g id="node-p2-footer" class="node box teal" data-node="368.00 739.40 140.00 52.00"><rect class="shape" x="368.00" y="739.40" width="140.00" height="52.00" rx="6.00"/><text class="center" data-text="404.50 754.20 67.00 22.40"><tspan x="438.00" y="770.20" font-size="16" font-weight="700">Worker</tspan></text></g>
+<g id="note-note-3" class="note" data-note="250.50 316.00 203.00 46.40"><path class="note-shape" d="M 250.50,316.00 H 443.50 L 453.50,326.00 V 362.40 H 250.50 Z M 443.50,316.00 V 326.00 H 453.50"/><text class="center" data-text="266.50 328.00 171.00 22.40"><tspan x="352.00" y="344.00" font-size="16" font-weight="400">The result is ready</tspan></text></g>
+<g id="label-m0-label" data-pill="269.50 129.00 165.00 21.00"><rect class="pill" x="269.50" y="129.00" width="165.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="275.50 133.00 153.00 13.00"><tspan class="mono" x="352.00" y="146.00" font-size="13" font-weight="400">Asks for the result</tspan></text></g>
+<g id="label-m1-label" data-pill="273.50 174.00 157.00 21.00"><rect class="pill" x="273.50" y="174.00" width="157.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="279.50 178.00 145.00 13.00"><tspan class="mono" x="352.00" y="191.00" font-size="13" font-weight="400">Returns the result</tspan></text></g>
+<g id="label-m2-label" data-pill="375.50 219.00 149.00 21.00"><rect class="pill" x="375.50" y="219.00" width="149.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="381.50 223.00 137.00 13.00"><tspan class="mono" x="450.00" y="236.00" font-size="13" font-weight="400">Updates its cache</tspan></text></g>
+<g id="label-m4-label" data-pill="195.50 451.40 141.00 21.00"><rect class="pill" x="195.50" y="451.40" width="141.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="201.50 455.40 129.00 13.00"><tspan class="mono" x="266.00" y="468.40" font-size="13" font-weight="400">Shows the result</tspan></text></g>
+<g id="label-m5-label" data-pill="147.50 564.40 237.00 21.00"><rect class="pill" x="147.50" y="564.40" width="237.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="153.50 568.40 225.00 13.00"><tspan class="mono" x="266.00" y="581.40" font-size="13" font-weight="400">Acknowledges, with a timeout</tspan></text></g>
+<g id="label-m6-label" data-pill="182.50 637.40 157.00 21.00"><rect class="pill" x="182.50" y="637.40" width="157.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="188.50 641.40 145.00 13.00"><tspan class="mono" x="261.00" y="654.40" font-size="13" font-weight="400">The update is lost</tspan></text></g>
+<g id="label-m7-label" data-pill="187.50 682.40 157.00 21.00"><rect class="pill" x="187.50" y="682.40" width="157.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="193.50 686.40 145.00 13.00"><tspan class="mono" x="266.00" y="699.40" font-size="13" font-weight="400">Sends a fresh copy</tspan></text></g>
 </g>
 </svg>

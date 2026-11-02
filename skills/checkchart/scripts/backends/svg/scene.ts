@@ -10,7 +10,7 @@ export type SvgNode = { id: string; box: Box; text: TextBlock; shape: Shape; cla
 export type Label = { id: string; box: Box; text: TextBlock; onRoute?: boolean };
 export type SvgEdge = {
   id: string; sections: Point[][]; dashed: boolean; head: "filled" | "open" | "lost";
-  both?: boolean; broken?: boolean; main?: boolean; source?: string; target?: string; labels: Label[];
+  both?: boolean; broken?: boolean; main?: boolean; accent?: boolean; source?: string; target?: string; labels: Label[];
   sectionOwners?: string[];
 };
 export type Container = { id: string; box: Box; text: TextBlock; headerHeight: number; untrusted: boolean; classes: string[]; sequence?: boolean; parent?: string; ports?: BoundaryPort[] };

@@ -1,0 +1,19 @@
+{
+  "kind": "architecture",
+  "direction": "LR",
+  "zones": { "shop": {}, "pay": { "untrusted": true } },
+  "components": {
+    "user": { "shape": "person" },
+    "web": { "zone": "shop" },
+    "order": { "zone": "shop" },
+    "db": { "zone": "shop", "shape": "store" },
+    "payment": { "zone": "pay", "shape": "external" }
+  },
+  "connections": [
+    { "id": "submit", "from": "user", "to": "web" },
+    { "id": "register", "from": "web", "to": "order" },
+    { "id": "save", "from": "order", "to": "db" },
+    { "id": "charge", "from": "order", "to": "payment", "style": "dashed" },
+    { "id": "notify", "from": "payment", "to": "web", "style": "dashed" }
+  ]
+}
