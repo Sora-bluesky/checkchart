@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="672.00" height="356.20" viewBox="0.00 0.00 672.00 356.20" role="img" aria-labelledby="chart-title">
+<title id="chart-title">acme 構成図：外部入力</title>
+<style>
+svg {
+  --font-family: "Arial", "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+  --font-mono: "BIZ UDGothic", "MS Gothic", monospace;
+  --canvas: #ffffff; --text: #232830; --edge-text: #556171; --line: #596370; --accent: #2563eb;
+  --node-fill: #ffffff; --node-stroke: #c7cdd5;
+  --tile-shadow: #0f172a0f;
+  --teal-fill: #b9f5ee; --teal-stroke: #008674;
+  --blue-fill: #d0e5ff; --blue-stroke: #0772e6;
+  --orange-fill: #ffdea7; --orange-stroke: #ec5a00;
+  --green-fill: #c4f7c9; --green-stroke: #008b06;
+  --purple-fill: #e6dcff; --purple-stroke: #6b3fd4;
+  --tan-fill: #ece6dd; --tan-stroke: #7a6a55;
+  --pink-fill: #ffd9ec; --pink-stroke: #c4247a;
+  --yellow-fill: #fff1b8; --yellow-stroke: #b38600;
+  --zone-fill: #f6f7f9; --zone-header: #e8ebef; --zone-stroke: #9aa1ab;
+  --break-fill: #ffe3e5; --break-stroke: #d6141f; --break-text: #b0101a;
+  --note-fill: #fff4c2; --note-stroke: #c9a400;
+  font-family: var(--font-family);
+  font-size: 16px; line-height: 1.4; color: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+  svg {
+    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #bbc5d2; --line: #a0a6b0; --accent: #7eb0ff;
+    --node-fill: #292c31; --node-stroke: #667485;
+    --tile-shadow: #00000026;
+    --teal-fill: #174b45; --teal-stroke: #58d8c7;
+    --blue-fill: #183e66; --blue-stroke: #6bb1ff;
+    --orange-fill: #633b1a; --orange-stroke: #ffa451;
+    --green-fill: #214e27; --green-stroke: #62d86a;
+    --purple-fill: #3c295f; --purple-stroke: #b69aff;
+    --tan-fill: #494034; --tan-stroke: #c3af94;
+    --pink-fill: #60213f; --pink-stroke: #f783bc;
+    --yellow-fill: #594b1a; --yellow-stroke: #e2c65c;
+    --zone-fill: #272a30; --zone-header: #343840; --zone-stroke: #8d95a1;
+    --break-fill: #5c2028; --break-stroke: #ff7180; --break-text: #ffb0b8;
+    --note-fill: #544819; --note-stroke: #ddc257;
+  }
+}
+.canvas, .pill, .legend-body { fill: var(--canvas); }
+text { fill: var(--text); stroke: none; }
+.center { text-anchor: middle; }
+.title { font-size: 22px; font-weight: 700; }
+.header { font-size: 15px; font-weight: 700; }
+.edge-label, .branch-label { font-family: var(--font-mono); font-size: 13px; fill: var(--edge-text); }
+.mono { font-family: var(--font-mono); }
+.node .mono { fill: var(--edge-text); }
+.legend-label { font-size: 14px; }
+.legend-heading { font-weight: 700; }
+.blue { --fill: var(--blue-fill); --stroke: var(--blue-stroke); }
+.orange { --fill: var(--orange-fill); --stroke: var(--orange-stroke); }
+.green { --fill: var(--green-fill); --stroke: var(--green-stroke); }
+.purple { --fill: var(--purple-fill); --stroke: var(--purple-stroke); }
+.yellow { --fill: var(--yellow-fill); --stroke: var(--yellow-stroke); }
+.teal { --fill: var(--teal-fill); --stroke: var(--teal-stroke); }
+.tan { --fill: var(--tan-fill); --stroke: var(--tan-stroke); }
+.pink { --fill: var(--pink-fill); --stroke: var(--pink-stroke); }
+.shape { fill: var(--node-fill); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; filter: drop-shadow(0px 1px 1px var(--tile-shadow)); }
+.swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; }
+.external .shape { stroke-dasharray: 6 4; }
+.bugPath { --stroke: var(--blue-stroke); }
+.bugPath .shape, .bugPath.swatch { stroke-width: 1.5px; }
+.breaks { --fill: var(--break-fill); --stroke: var(--break-stroke); }
+.breaks .shape, .breaks.swatch { fill: var(--break-fill); stroke-width: 1.5px; }
+.breaks text, .breaks .mono, .break-note text { fill: var(--break-text); }
+.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; stroke-linejoin: round; }
+.dashed .edge { stroke-dasharray: 4 5; }
+.arrow-filled { fill: var(--connector, var(--line)); stroke: none; }
+.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; }
+.primary { --connector: var(--accent); }
+.trust-break { --connector: var(--break-stroke); }
+.trust-break .edge { stroke-width: 1.5px; }
+.container-body { fill: var(--zone-fill); stroke: var(--zone-stroke); stroke-width: 1.5px; }
+.container-header { fill: none; stroke: none; }
+.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 1.5px; stroke-dasharray: 4 5; }
+.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 1.5px; }
+.group .container-body { fill: var(--fill); fill-opacity: 0.12; stroke: var(--stroke); stroke-opacity: 0.6; stroke-width: 1.5px; }
+.lock { fill: none; stroke: var(--text); stroke-width: 1.5px; }
+.lock-body { fill: var(--text); stroke: none; }
+.lifeline { stroke: var(--zone-stroke); stroke-width: 1.5px; stroke-dasharray: 6 4; }
+.frame { fill: none; stroke: var(--zone-stroke); stroke-width: 1.5px; }
+.frame-tab { fill: var(--zone-header); stroke: var(--zone-stroke); stroke-width: 1.5px; }
+.branch-divider { stroke: var(--zone-stroke); stroke-width: 1.5px; stroke-dasharray: 6 4; }
+.note-shape { fill: var(--note-fill); stroke: var(--note-stroke); stroke-width: 1.5px; }
+.break-note .note-shape { fill: var(--break-fill); stroke: var(--break-stroke); }
+.break-band { fill: var(--break-fill); }
+.legend-body { stroke: var(--zone-stroke); stroke-width: 1px; }
+</style>
+<rect class="canvas" x="0.00" y="0.00" width="672.00" height="356.20"/>
+<text class="title" data-text="24.00 24.00 245.00 30.80"><tspan x="24.00" y="46.00" font-size="22" font-weight="700">acme 構成図：外部入力</tspan></text>
+<g id="legend" data-legend="419.00 24.00 229.00 99.20">
+<rect class="legend-body" x="419.00" y="24.00" width="229.00" height="99.20"/>
+<text class="legend-label legend-heading" data-text="431.00 32.00 29.00 19.60"><tspan x="431.00" y="46.00" font-size="14" font-weight="700">凡例</tspan></text>
+<rect class="swatch untrusted" x="431.00" y="61.80" width="16.00" height="12.00"/>
+<text class="legend-label" data-text="459.00 58.00 101.00 19.60"><tspan x="459.00" y="72.00" font-size="14" font-weight="400">信頼しない範囲</tspan></text>
+<rect class="swatch breaks" x="431.00" y="91.40" width="16.00" height="12.00"/>
+<text class="legend-label" data-text="459.00 87.60 177.00 19.60"><tspan x="459.00" y="101.60" font-size="14" font-weight="400">規則違反：TrustChecked</tspan></text>
+</g>
+<g id="diagram" transform="translate(24.00 147.20)" data-diagram="24.00 147.20 624.00 185.00">
+<g id="container-z0" class="container untrusted " data-container="12.00 12.00 220.00 161.00" data-tab="12.00 12.00 73.00 29.00"><rect class="container-body" x="12.00" y="12.00" width="220.00" height="161.00" rx="8.00"/><rect class="container-header" x="12.00" y="12.00" width="73.00" height="29.00"/><path class="lock" d="M 26.00,26.50 v -3 a 3,3 0 0 1 6,0 v 3"/><rect class="lock-body" x="24.00" y="25.50" width="10.00" height="8.00"/><circle data-port="e0 out EAST 232.00,107.00" cx="232.00" cy="107.00" r="0.00"/><text class="header" data-text="42.00 20.00 31.00 21.00"><tspan x="42.00" y="35.00" font-size="15" font-weight="700">外部</tspan></text></g>
+<g id="edge-e0" class="edge-group trust-break" data-source="n0" data-target="n1"><path id="e0-s0" class="edge" data-points="192.00,107.00 232.00,107.00" d="M 192.00,107.00 L 232.00,107.00"/><path id="e0-s1" class="edge" data-points="232.00,107.00 472.00,107.00" d="M 232.00,107.00 L 462.00,107.00"/><polygon class="arrow-filled" points="472.00,107.00 462.00,112.00 462.00,102.00"/></g>
+<g id="node-n0" class="node box breaks" data-node="52.00 81.00 140.00 52.00"><rect class="shape" x="52.00" y="81.00" width="140.00" height="52.00" rx="6.00"/><text class="center" data-text="97.00 95.80 50.00 22.40"><tspan x="122.00" y="111.80" font-size="16" font-weight="700">送信元</tspan></text></g>
+<g id="node-n1" class="node box breaks" data-node="472.00 81.00 140.00 52.00"><rect class="shape" x="472.00" y="81.00" width="140.00" height="52.00" rx="6.00"/><text class="center" data-text="498.50 95.80 87.00 22.40"><tspan x="542.00" y="111.80" font-size="16" font-weight="700">acme API</tspan></text></g>
+<g id="label-e0-label" data-pill="299.00 82.00 106.00 21.00"><rect class="pill" x="299.00" y="82.00" width="106.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="305.00 86.00 94.00 13.00"><tspan class="mono" x="352.00" y="99.00" font-size="13" font-weight="400">入力を送信する</tspan></text></g>
+</g>
+</svg>

@@ -2,11 +2,13 @@ import {
   byText, elementsOf, keyOf, messagesOf,
   type Answers, type Check, type Model, type Ref, type Sequence,
 } from "../ir.ts";
+import { captions } from "./captions.ts";
 
 export const ruleNames = (rules: Iterable<string>) => [...new Set(rules)].sort(byText).join(" or ");
 
 // Both renderers use the same marks, paths, legend wording and invalid-zone policy.
 export function graphPresentation(model: Model, answers: Answers, check: Check) {
+  const caption = captions[answers.locale ?? "en"];
   const broken = new Set(check.bugs.flatMap((bug) => bug.marks.map(keyOf)));
   const trail = new Set<string>();
   const pathRules = new Set<string>();
@@ -18,9 +20,9 @@ export function graphPresentation(model: Model, answers: Answers, check: Check) 
   const used = new Set(elementsOf(model).map((ref) => answers.groups.get(keyOf(ref))));
   const legend: [string, string][] = [];
   for (const [group, color] of answers.colors) if (used.has(group)) legend.push([group, color]);
-  if (model.kind === "architecture" && Object.values(model.zones).some((zone) => zone.untrusted)) legend.push(["Untrusted content", "untrusted"]);
-  if (check.bugs.length) legend.push([`Breaks ${ruleNames(check.bugs.map((bug) => bug.rule))}`, "breaks"]);
-  if (trail.size) legend.push([`Path to the ${ruleNames(pathRules)} bug`, "bugPath"]);
+  if (model.kind === "architecture" && Object.values(model.zones).some((zone) => zone.untrusted)) legend.push([caption.untrusted, "untrusted"]);
+  if (check.bugs.length) legend.push([caption.breaks(ruleNames(check.bugs.map((bug) => bug.rule))), "breaks"]);
+  if (trail.size) legend.push([caption.bugPath(ruleNames(pathRules)), "bugPath"]);
   return { broken, trail, legend };
 }
 

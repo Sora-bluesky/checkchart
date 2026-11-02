@@ -4,6 +4,7 @@ import {
   type Sequence, type SequenceItem,
 } from "../ir.ts";
 import { graphPresentation, sequenceMarks, zoneParents } from "./presentation.ts";
+import { captions } from "./captions.ts";
 
 // Adapted from pstack's statechart skill. See NOTICE for the license.
 const BLANK = /[\t-\r\u0085\p{Zl}\p{Zp}]/u;
@@ -94,6 +95,7 @@ const text = (s: string) => s.split(/\r\n|\r|\n/).map((line) => esc(line, true).
 const BREAKS = "fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834";
 
 function graph(model: Exclude<Model, Sequence>, answers: Answers, check: Check, fill: boolean): string[] {
+  const caption = captions[answers.locale ?? "en"];
   const body: string[] = [];
   const marks: string[] = [];
   const refs: Ref[] = model.kind === "flow"
@@ -155,7 +157,7 @@ function graph(model: Exclude<Model, Sequence>, answers: Answers, check: Check, 
   }
   const lines = [`flowchart ${model.direction}`];
   if (legend.length) {
-    lines.push('  subgraph legend["Legend"]', "    direction LR");
+    lines.push(`  subgraph legend["${text(caption.legend)}"]`, "    direction LR");
     for (const [index, [label]] of legend.entries()) lines.push(`    lg${index}["${text(label)}"]`);
     if (legend.length > 1) lines.push(`    ${legend.map((_, index) => `lg${index}`).join(" ~~~ ")}`);
     lines.push("  end");
@@ -172,6 +174,7 @@ function graph(model: Exclude<Model, Sequence>, answers: Answers, check: Check, 
 }
 
 function sequence(model: Sequence, answers: Answers, bugs: Bug[], fill: boolean): string[] {
+  const caption = captions[answers.locale ?? "en"];
   const lines = ["sequenceDiagram"];
   const order = participantOrder(model, answers);
   const ids = new Map(order.map((id, index) => [id, `p${index}`]));
@@ -193,7 +196,7 @@ function sequence(model: Sequence, answers: Answers, bugs: Bug[], fill: boolean)
   for (const mark of standalone) {
     lines.push("  rect rgb(255, 236, 238)");
     const id = mark.ref ? ids.get(mark.ref.id) : ids.values().next().value;
-    lines.push(id ? `    Note right of ${id}: Breaks ${mark.rule}` : `    %% Breaks ${mark.rule}`);
+    lines.push(id ? `    Note right of ${id}: ${text(caption.breaks(mark.rule))}` : `    %% ${text(caption.breaks(mark.rule))}`);
     lines.push("  end");
   }
   let index = 0;
@@ -201,7 +204,7 @@ function sequence(model: Sequence, answers: Answers, bugs: Bug[], fill: boolean)
     for (const item of items) {
       if (item.kind === "parallel") {
         for (const [branch, messages] of item.par.entries()) {
-          const label = item.branches === undefined ? `Branch ${branch + 1}` : answers.branchLabels.get(messages) ?? item.branches[branch];
+          const label = item.branches === undefined ? caption.branch(branch + 1) : answers.branchLabels.get(messages) ?? item.branches[branch];
           lines.push(`${indent}${branch === 0 ? "par" : "and"} ${text(label)}`);
           draw(messages, indent + "  ");
         }
@@ -215,14 +218,14 @@ function sequence(model: Sequence, answers: Answers, bugs: Bug[], fill: boolean)
       const participants = participantsOf(item);
       const target = ids.get(participants.at(-1) ?? "") ?? ids.values().next().value;
       if (participants.some((id) => !ids.has(id))) {
-        lines.push(target ? `${inside}Note right of ${target}: ${label} (undeclared participant)` : `${inside}%% Undeclared participant`);
+        lines.push(target ? `${inside}Note right of ${target}: ${label} (${text(caption.undeclared)})` : `${inside}%% ${text(caption.undeclaredComment)}`);
       } else if (item.type === "note") lines.push(`${inside}Note over ${item.over.map((id) => ids.get(id)).join(",")}: ${label}`);
       else {
         const arrow = item.type === "reply" ? "-->>" : item.type === "signal" ? "-)" : item.type === "lost" ? "--x" : "->>";
         lines.push(`${inside}${ids.get(item.from)}${arrow}${ids.get(item.to)}: ${label}`);
       }
       for (const rule of [...new Set(rules)].sort(byText)) {
-        lines.push(target ? `${inside}Note right of ${target}: Breaks ${rule}` : `${inside}%% Breaks ${rule}`);
+        lines.push(target ? `${inside}Note right of ${target}: ${text(caption.breaks(rule))}` : `${inside}%% ${text(caption.breaks(rule))}`);
       }
       if (rules.length) lines.push(`${indent}end`);
     }

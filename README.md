@@ -24,7 +24,7 @@ Warnings point at things that make a chart hard to read: deep nesting, two-way a
 You write two files:
 
 - `model.json` holds the facts: nodes and edges, participants and messages, or zones, components and connections. It uses ids only.
-- `view.mjs` holds the reader's words: title, reader, question, a label for each id, the text on each arrow, groups and their colors, and the product name.
+- `view.mjs` holds the reader's words: title, reader, question, a label for each id, the text on each arrow, groups and their colors, the product name, and an optional `locale` (`"en"` by default, or `"ja"`) for fixed chart captions.
 
 Then run:
 

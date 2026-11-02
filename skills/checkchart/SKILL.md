@@ -44,6 +44,7 @@ export const step = () => "Sends the request data";
 
 - `title`, `reader`, `question`: strings, each non-empty for `PurposeStated`. Missing the view breaks this rule. Reader and question appear only at the top of the report, never in the drawing.
 - `product`: optional exact product spelling, such as `acme`. `ProductName` checks its case in drawn titles, labels, arrow labels and used group names. The name must appear in the title or an element label. It matches without adjacent ASCII letters or digits; CJK neighbors are allowed.
+- `locale`: `"en"` (default) or `"ja"` for fixed chart captions. Set it to the language the user is writing in; use `"en"` for other languages. Rule names, reports and CLI messages stay English.
 - `label(id, kind, fact)`: a string, or use an object from id to string. Missing map entries use the id. Kinds are `node`, `participant`, `component`, `zone`, `branch`. Use `\n` for a hard line break. Prefer verb plus noun for flow steps and name plus role for components. In SVG nodes, the first authored line is the bold name (including its automatic wraps); subsequent authored lines are smaller, muted monospace details.
 - `group(id, kind, fact)`: a group name or `undefined`, or use an object from id to group. It colors nodes, components and participants, and requires `colors`.
 - `colors`: group names mapped to `blue`, `orange`, `purple`, `yellow`, `teal`, `tan` or `pink`. Give color one consistent meaning; group names also appear as text.
@@ -80,7 +81,7 @@ A store is a side target, not a way forward. The SVG main path is the longest si
 {"kind":"sequence","participants":["ui","core"],"messages":[{"id":"request","from":"ui","to":"core","type":"call"},{"from":"core","to":"ui","type":"reply","answers":"request"},{"from":"core","to":"core","type":"self"},{"type":"note","over":["core"]},{"par":[[{"from":"core","to":"ui","type":"signal"}],[{"id":"retry","from":"ui","to":"core","type":"call","timeout":true}]]}]}
 ```
 
-Message types are `call`, `reply`, `signal`, `lost`, `self`, `note`. Give a message an id when another names it. A note's `over` names one or two participants. `par` has at least two message lists and may nest. Its optional `branches` gives one id per branch; the view labels them. Unnamed branches use "Branch 1", "Branch 2", and so on.
+Message types are `call`, `reply`, `signal`, `lost`, `self`, `note`. Give a message an id when another names it. A note's `over` names one or two participants. `par` has at least two message lists and may nest. Its optional `branches` gives one id per branch; the view labels them. Unnamed branches use "Branch 1", "Branch 2" ("分岐 1", "分岐 2" with `locale: "ja"`), and so on.
 
 - `Declared`: all named participants exist; every declared participant appears in a message.
 - `Answered`: every call has a later reply naming its id in `answers`, or declares `timeout: true`.

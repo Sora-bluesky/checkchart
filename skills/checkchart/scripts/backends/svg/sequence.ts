@@ -3,11 +3,13 @@ import {
   type Answers, type Check, type Message, type Sequence, type SequenceItem,
 } from "../../ir.ts";
 import { ruleNames, sequenceMarks } from "../presentation.ts";
+import { captions } from "../captions.ts";
 import { emptyScene, type Note, type SvgNode } from "./scene.ts";
 import { edgeLabelBlock, fontSize, headerHeight, textBlock, widthBudget } from "./text.ts";
 import { routeTextObstacles } from "./obstacles.ts";
 
 export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
+  const caption = captions[answers.locale ?? "en"];
   const scene = emptyScene();
   const order = participantOrder(model, answers);
   const labels = order.map((id) => textBlock(labelOf(answers, "participant", id), 228, fontSize.node, "first"));
@@ -79,7 +81,7 @@ export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
   };
   for (const [index, mark] of standalone.entries()) {
     const center = centers.get(mark.ref?.id ?? "") ?? centers.values().next().value ?? 140;
-    const note = sticky(`Breaks ${mark.rule}`, center, cursor, `standalone-${index}`, true);
+    const note = sticky(caption.breaks(mark.rule), center, cursor, `standalone-${index}`, true);
     scene.notes.push(note);
     scene.bands.push({ ...span(mark.ref ? [mark.ref.id] : order), y: cursor - 4, height: note.box.height + 8 });
     cursor += note.box.height + 20;
@@ -93,7 +95,7 @@ export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
     const target = centers.get(participants.at(-1) ?? "") ?? centers.values().next().value ?? 140;
     if (!known || message.type === "note") {
       const from = centers.get(participants[0]) ?? target;
-      const note = sticky((stepOf(answers, message) ?? "") + (known ? "" : " (undeclared participant)"), (from + target) / 2, cursor, `note-${index}`);
+      const note = sticky((stepOf(answers, message) ?? "") + (known ? "" : ` (${caption.undeclared})`), (from + target) / 2, cursor, `note-${index}`);
       scene.notes.push(note);
       cursor += note.box.height + 16;
     } else {
@@ -114,7 +116,7 @@ export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
       cursor += Math.max(40, box.height + 16) + (loop ? loopHeight : 0);
     }
     if (rules.length) {
-      const note = sticky(`Breaks ${ruleNames(rules)}`, target, cursor + 2, `break-${index}`, true);
+      const note = sticky(caption.breaks(ruleNames(rules)), target, cursor + 2, `break-${index}`, true);
       scene.notes.push(note);
       cursor = note.box.y + note.box.height + 12;
       scene.bands.push({ ...span(participants), y: top - 4, height: cursor - top + 4 });
@@ -128,7 +130,7 @@ export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
       scene.frames.push(frame);
       cursor += 30;
       for (const [index, branch] of item.par.entries()) {
-        const name = item.branches === undefined ? `Branch ${index + 1}` : answers.branchLabels.get(branch) ?? item.branches[index];
+        const name = item.branches === undefined ? caption.branch(index + 1) : answers.branchLabels.get(branch) ?? item.branches[index];
         const text = edgeLabelBlock(`[${name}]`);
         frame.branches.push({ y: cursor, text });
         cursor += text.height + 14;
@@ -140,7 +142,7 @@ export function sequenceScene(model: Sequence, answers: Answers, check: Check) {
         ...scene.frames.slice(firstFrame + 1)].map((item) => item.box);
       const right = Math.max(frame.box.x + frame.box.width, ...content.map((box) => box.x + box.width + 12));
       frame.box.x = Math.min(frame.box.x, ...content.map((box) => box.x - 12));
-      frame.box.width = Math.max(right - frame.box.x, 46, ...frame.branches.map((branch) => branch.text.width + 24));
+      frame.box.width = Math.max(right - frame.box.x, 46, textBlock(caption.parallel, 40, fontSize.header, 700).width + 16, ...frame.branches.map((branch) => branch.text.width + 24));
       cursor += 16;
     }
   };
