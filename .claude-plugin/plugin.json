@@ -1,6 +1,6 @@
 {
   "name": "checkchart",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Check the facts of flowcharts, sequence diagrams and architecture diagrams before drawing them as Mermaid or SVG.",
   "author": { "name": "Sora-bluesky" },
   "license": "MIT",
