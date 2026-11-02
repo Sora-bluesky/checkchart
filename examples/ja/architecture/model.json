@@ -1,0 +1,7 @@
+{
+  "kind": "architecture",
+  "direction": "LR",
+  "zones": { "external": { "untrusted": true } },
+  "components": { "source": { "zone": "external" }, "api": {} },
+  "connections": [{ "from": "source", "to": "api" }]
+}

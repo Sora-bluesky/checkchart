@@ -60,7 +60,10 @@ export type Element = Ref & (
 );
 export type Arrow = FlowEdge | Message | Connection;
 
+export type Locale = "en" | "ja";
+
 export type Answers = {
+  locale?: Locale;
   title?: string;
   reader?: string;
   question?: string;

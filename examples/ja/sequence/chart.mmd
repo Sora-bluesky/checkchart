@@ -1,0 +1,15 @@
+---
+title: "acme シーケンス図：応答の欠落"
+---
+sequenceDiagram
+  participant p0 as 利用者
+  participant p1 as acme API
+  rect rgb(255, 236, 238)
+    p0->>p1: 要求を送る
+    Note right of p1: 規則違反：Answered
+  end
+  par 分岐 1
+    p1-)p0: 通知を送る
+  and 分岐 2
+    p0-)p1: 通知を送る
+  end

@@ -64,7 +64,7 @@ for (const [kind, model, key, arrow] of [
 });
 
 const invalidViews: [string, string, RegExp, unknown?][] = [
-  ["unknown export", 'export const extra = "unused";', /exports extra, which the command does not read\. Export only title, reader, question, product, colors, label, group and step/],
+  ["unknown export", 'export const extra = "unused";', /exports extra, which the command does not read\. Export only title, reader, question, product, locale, colors, label, group and step/],
   ["bad color", 'export const colors = { Team: "red" };', /colors give "Team" the color "red".*blue.*pink/],
   ["group without colors", 'export const group = () => "Team";', /group but no colors/],
   ["unknown returned group", 'export const colors = { Team: "teal" }; export const group = () => "Other";', /"Other", which colors does not name/],

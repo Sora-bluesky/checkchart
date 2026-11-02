@@ -1,0 +1,22 @@
+---
+title: "acme 構成図：外部入力"
+---
+flowchart LR
+  subgraph legend["凡例"]
+    direction LR
+    lg0["信頼しない範囲"]
+    lg1["規則違反：TrustChecked"]
+    lg0 ~~~ lg1
+  end
+  class lg0 untrusted
+  class lg1 breaks
+  subgraph z0["外部"]
+    n0["送信元"]
+  end
+  n1["acme API"]
+  n0 -->|"入力を送信する"| n1
+  classDef untrusted fill:#f6f7f9,stroke:#4b525d,stroke-width:2px,stroke-dasharray:6 4
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class z0 untrusted
+  class n0 breaks
+  class n1 breaks

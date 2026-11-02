@@ -1,0 +1,11 @@
+{
+  "kind": "sequence",
+  "participants": ["client", "api"],
+  "messages": [
+    { "id": "request", "from": "client", "to": "api", "type": "call" },
+    { "par": [
+      [{ "from": "api", "to": "client", "type": "signal" }],
+      [{ "from": "client", "to": "api", "type": "signal" }]
+    ] }
+  ]
+}

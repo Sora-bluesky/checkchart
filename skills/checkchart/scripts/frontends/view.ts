@@ -3,14 +3,15 @@ import { pathToFileURL } from "node:url";
 import { inspect } from "node:util";
 import {
   COLORS, arrowsOf, elementsOf, isPlainObject, keyOf, list, messageOf,
-  type Answers, type Color, type Element, type Model,
+  type Answers, type Color, type Element, type Locale, type Model,
 } from "../ir.ts";
 
-const EXPORTS = ["title", "reader", "question", "product", "colors", "label", "group", "step"];
+const EXPORTS = ["title", "reader", "question", "product", "locale", "colors", "label", "group", "step"];
 type Callback = (...args: unknown[]) => unknown;
 type Mapper = Callback | Record<string, unknown>;
 const isFunction = (value: unknown): value is Callback => typeof value === "function";
 export type View = {
+  locale: Locale;
   title?: string;
   reader?: string;
   question?: string;
@@ -36,6 +37,8 @@ export function checkView(view: Record<string, unknown>): View {
   const extra = Object.keys(view).filter((name) => !EXPORTS.includes(name));
   if (extra.length) throw new Error(`The view exports ${list(extra)}, which the command does not read. Export only ${list(EXPORTS)}.`);
   const { product, step } = view;
+  const locale = Object.hasOwn(view, "locale") ? view.locale : "en";
+  if (locale !== "en" && locale !== "ja") throw new Error('The view\'s locale must be "en" or "ja".');
   const title = optionalText(view.title, "title");
   const reader = optionalText(view.reader, "reader");
   const question = optionalText(view.question, "question");
@@ -59,7 +62,7 @@ export function checkView(view: Record<string, unknown>): View {
     }
   };
   if (group !== undefined && typeof group !== "function") for (const [id, name] of Object.entries(group)) checkGroup(name, `group[${JSON.stringify(id)}]`);
-  return { title, reader, question, product, colors, label, group, step };
+  return { title, reader, question, product, locale, colors, label, group, step };
 }
 
 export async function loadView(file?: string): Promise<View> {
@@ -74,7 +77,7 @@ function ask(mapper: Mapper | undefined, element: Element): unknown {
 }
 
 export function answersOf(model: Model, view: View): Answers {
-  const answers: Answers = { title: view.title, reader: view.reader, question: view.question, product: view.product, colors: view.colors, labels: new Map(), branchLabels: new Map(), groups: new Map(), steps: new Map() };
+  const answers: Answers = { title: view.title, reader: view.reader, question: view.question, product: view.product, locale: view.locale, colors: view.colors, labels: new Map(), branchLabels: new Map(), groups: new Map(), steps: new Map() };
   for (const element of elementsOf(model)) {
     const key = keyOf(element);
     let text: unknown;

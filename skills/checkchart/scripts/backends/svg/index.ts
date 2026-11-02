@@ -14,6 +14,6 @@ export async function svg(model: Model, answers: Answers, check: Check, modelNam
   // Mermaid sequences have no legend: participant group bands carry the key.
   const entries = model.kind === "sequence" ? [] : graphPresentation(model, answers, check).legend;
   const title = answers.title || modelName;
-  return { image: render(scene, title, entries), width: canvasLayout(scene, title, entries).width, warnings: scene.warnings,
+  return { image: render(scene, title, entries, answers.locale), width: canvasLayout(scene, title, entries).width, warnings: scene.warnings,
     ...(model.kind === "sequence" ? {} : { crossings: countCrossings(scene.edges) }) };
 }

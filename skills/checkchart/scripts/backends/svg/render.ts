@@ -3,6 +3,8 @@ import { tabBox, type Box, type Container, type Label, type Point, type Scene, t
 import { style } from "./style.ts";
 import { canvasObstacles, routeTextObstacles } from "./obstacles.ts";
 import { warnRouteGoals } from "./route-layout.ts";
+import { captions } from "../captions.ts";
+import type { Locale } from "../../ir.ts";
 
 export const number = (value: number) => (Math.abs(value) < 0.005 ? 0 : value).toFixed(2);
 export const xml = (text: string) => text.replace(/[^\u0009\u000a\u000d\u0020-\ud7ff\ue000-\ufffd\u{10000}-\u{10ffff}]/gu, "\ufffd")
@@ -131,7 +133,8 @@ export function canvasLayout(scene: Scene, title: string, entries: [string, stri
   return { legendRows, legendWidth, legendHeight, titleText, width, diagramY, height };
 }
 
-export function render(scene: Scene, title: string, entries: [string, string][]) {
+export function render(scene: Scene, title: string, entries: [string, string][], locale: Locale = "en") {
+  const caption = captions[locale];
   const { legendRows, legendWidth, legendHeight, titleText, width, diagramY, height } = canvasLayout(scene, title, entries);
   routeTextObstacles(scene, canvasObstacles(titleText, diagramY, width, legendWidth, legendHeight));
   warnRouteGoals(scene);
@@ -142,7 +145,7 @@ export function render(scene: Scene, title: string, entries: [string, string][])
   ];
   if (entries.length) {
     const box = { x: width - 24 - legendWidth, y: 24, width: legendWidth, height: legendHeight };
-    lines.push(`<g id="legend" data-legend="${boxData(box)}">`, rect(box, "legend-body"), text(textBlock("Legend", 260, fontSize.legend, 700), box.x + 12, box.y + 8, "legend-label legend-heading"));
+    lines.push(`<g id="legend" data-legend="${boxData(box)}">`, rect(box, "legend-body"), text(textBlock(caption.legend, 260, fontSize.legend, 700), box.x + 12, box.y + 8, "legend-label legend-heading"));
     let y = box.y + 34;
     for (const row of legendRows) {
       lines.push(rect({ x: box.x + 12, y: y + (row.text.height - 12) / 2, width: 16, height: 12 }, `swatch ${row.cls}`), text(row.text, box.x + 40, y, "legend-label"));
@@ -156,7 +159,9 @@ export function render(scene: Scene, title: string, entries: [string, string][])
   lines.push(...scene.lifelines.map((line) => `<line class="lifeline" x1="${number(line.x)}" x2="${number(line.x)}" y1="${number(line.top)}" y2="${number(line.bottom)}"/>`));
   for (const frame of scene.frames) {
     const { x, y, width: w } = frame.box;
-    lines.push(`<g id="frame-${frame.id}">`, rect(frame.box, "frame"), `<path class="frame-tab" d="M ${pair({ x, y })} h 46.00 v 18.00 l -8.00,8.00 h -38.00 Z"/>`, text(textBlock("par", 40, fontSize.header, 700), x + 9, y + 4, "header"));
+    const tabText = textBlock(caption.parallel, 40, fontSize.header, 700);
+    const tabWidth = Math.max(46, tabText.width + 16);
+    lines.push(`<g id="frame-${frame.id}">`, rect(frame.box, "frame"), `<path class="frame-tab" d="M ${pair({ x, y })} h ${number(tabWidth)} v 18.00 l -8.00,8.00 h -${number(tabWidth - 8)} Z"/>`, text(tabText, x + 9, y + 4, "header"));
     for (const [index, branch] of frame.branches.entries()) {
       if (index) lines.push(`<line class="branch-divider" x1="${number(x)}" x2="${number(x + w)}" y1="${number(branch.y - 6)}" y2="${number(branch.y - 6)}"/>`);
       lines.push(text(branch.text, x + 12, branch.y, "branch-label"));

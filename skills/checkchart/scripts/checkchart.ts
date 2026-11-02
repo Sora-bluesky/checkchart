@@ -16,7 +16,7 @@ import { messageOf } from "./ir.ts";
 const USAGE = `Usage: checkchart MODEL.json [--view FILE] [--out DIR] [--fill] [--svg]
 
 Checks the facts and draws a Mermaid flowchart, sequence or architecture diagram.
-  --view FILE  A module exporting title, reader, question, product, colors, label, group, and step.
+  --view FILE  A module exporting title, reader, question, product, locale, colors, label, group, and step.
   --out DIR    A new or empty output folder. Default: MODEL-chart beside the model.
   --fill       Add light group colors and the bug path style for other viewers.
   --svg        Also draw chart.svg with the optional elkjs package.
