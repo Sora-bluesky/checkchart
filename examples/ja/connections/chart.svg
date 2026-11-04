@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="869.00" height="517.00" viewBox="0.00 0.00 869.00 517.00" role="img" aria-labelledby="chart-title">
+<title id="chart-title">acme 構成図：接続</title>
+<style>
+svg {
+  --font-family: "Arial", "BIZ UDPGothic", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+  --font-mono: "BIZ UDGothic", "MS Gothic", monospace;
+  --canvas: #ffffff; --text: #232830; --edge-text: #556171; --line: #596370; --accent: #2563eb;
+  --node-fill: #ffffff; --node-stroke: #c7cdd5;
+  --tile-shadow: #0f172a0f;
+  --teal-fill: #b9f5ee; --teal-stroke: #008674;
+  --blue-fill: #d0e5ff; --blue-stroke: #0772e6;
+  --orange-fill: #ffdea7; --orange-stroke: #ec5a00;
+  --green-fill: #c4f7c9; --green-stroke: #008b06;
+  --purple-fill: #e6dcff; --purple-stroke: #6b3fd4;
+  --tan-fill: #ece6dd; --tan-stroke: #7a6a55;
+  --pink-fill: #ffd9ec; --pink-stroke: #c4247a;
+  --yellow-fill: #fff1b8; --yellow-stroke: #b38600;
+  --zone-fill: #f6f7f9; --zone-header: #e8ebef; --zone-stroke: #9aa1ab;
+  --break-fill: #ffe3e5; --break-stroke: #d6141f; --break-text: #b0101a;
+  --note-fill: #fff4c2; --note-stroke: #c9a400;
+  font-family: var(--font-family);
+  font-size: 16px; line-height: 1.4; color: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+  svg {
+    --canvas: #1f1f1f; --text: #f5f5f5; --edge-text: #bbc5d2; --line: #a0a6b0; --accent: #7eb0ff;
+    --node-fill: #292c31; --node-stroke: #667485;
+    --tile-shadow: #00000026;
+    --teal-fill: #174b45; --teal-stroke: #58d8c7;
+    --blue-fill: #183e66; --blue-stroke: #6bb1ff;
+    --orange-fill: #633b1a; --orange-stroke: #ffa451;
+    --green-fill: #214e27; --green-stroke: #62d86a;
+    --purple-fill: #3c295f; --purple-stroke: #b69aff;
+    --tan-fill: #494034; --tan-stroke: #c3af94;
+    --pink-fill: #60213f; --pink-stroke: #f783bc;
+    --yellow-fill: #594b1a; --yellow-stroke: #e2c65c;
+    --zone-fill: #272a30; --zone-header: #343840; --zone-stroke: #8d95a1;
+    --break-fill: #5c2028; --break-stroke: #ff7180; --break-text: #ffb0b8;
+    --note-fill: #544819; --note-stroke: #ddc257;
+  }
+}
+.canvas, .pill, .legend-body { fill: var(--canvas); }
+text { fill: var(--text); stroke: none; }
+.center { text-anchor: middle; }
+.title { font-size: 22px; font-weight: 700; }
+.header { font-size: 15px; font-weight: 700; }
+.edge-label, .branch-label { font-family: var(--font-mono); font-size: 13px; fill: var(--edge-text); }
+.mono { font-family: var(--font-mono); }
+.node .mono { fill: var(--edge-text); }
+.legend-label { font-size: 14px; }
+.legend-heading { font-weight: 700; }
+.blue { --fill: var(--blue-fill); --stroke: var(--blue-stroke); }
+.orange { --fill: var(--orange-fill); --stroke: var(--orange-stroke); }
+.green { --fill: var(--green-fill); --stroke: var(--green-stroke); }
+.purple { --fill: var(--purple-fill); --stroke: var(--purple-stroke); }
+.yellow { --fill: var(--yellow-fill); --stroke: var(--yellow-stroke); }
+.teal { --fill: var(--teal-fill); --stroke: var(--teal-stroke); }
+.tan { --fill: var(--tan-fill); --stroke: var(--tan-stroke); }
+.pink { --fill: var(--pink-fill); --stroke: var(--pink-stroke); }
+.shape { fill: var(--node-fill); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; filter: drop-shadow(0px 1px 1px var(--tile-shadow)); }
+.swatch { fill: var(--fill, var(--node-fill)); stroke: var(--stroke, var(--node-stroke)); stroke-width: 1px; }
+.external .shape { stroke-dasharray: 6 4; }
+.bugPath { --stroke: var(--blue-stroke); }
+.bugPath .shape, .bugPath.swatch { stroke-width: 1.5px; }
+.breaks { --fill: var(--break-fill); --stroke: var(--break-stroke); }
+.breaks .shape, .breaks.swatch { fill: var(--break-fill); stroke-width: 1.5px; }
+.breaks text, .breaks .mono, .break-note text { fill: var(--break-text); }
+.edge { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; stroke-linejoin: round; }
+.dashed .edge { stroke-dasharray: 4 5; }
+.arrow-filled { fill: var(--connector, var(--line)); stroke: none; }
+.arrow-open, .lost { fill: none; stroke: var(--connector, var(--line)); stroke-width: 1.5px; }
+.primary { --connector: var(--accent); }
+.trust-break { --connector: var(--break-stroke); }
+.trust-break .edge { stroke-width: 1.5px; }
+.container-body { fill: var(--zone-fill); stroke: var(--zone-stroke); stroke-width: 1.5px; }
+.container-header { fill: none; stroke: none; }
+.untrusted .container-body, .untrusted.swatch { fill: var(--zone-fill); stroke: var(--line); stroke-width: 1.5px; stroke-dasharray: 4 5; }
+.container.breaks .container-body { fill: var(--break-fill); stroke: var(--break-stroke); stroke-width: 1.5px; }
+.group .container-body { fill: var(--fill); fill-opacity: 0.12; stroke: var(--stroke); stroke-opacity: 0.6; stroke-width: 1.5px; }
+.lock { fill: none; stroke: var(--text); stroke-width: 1.5px; }
+.lock-body { fill: var(--text); stroke: none; }
+.lifeline { stroke: var(--zone-stroke); stroke-width: 1.5px; stroke-dasharray: 6 4; }
+.frame { fill: none; stroke: var(--zone-stroke); stroke-width: 1.5px; }
+.frame-tab { fill: var(--zone-header); stroke: var(--zone-stroke); stroke-width: 1.5px; }
+.branch-divider { stroke: var(--zone-stroke); stroke-width: 1.5px; stroke-dasharray: 6 4; }
+.note-shape { fill: var(--note-fill); stroke: var(--note-stroke); stroke-width: 1.5px; }
+.break-note .note-shape { fill: var(--break-fill); stroke: var(--break-stroke); }
+.break-band { fill: var(--break-fill); }
+.legend-body { stroke: var(--zone-stroke); stroke-width: 1px; }
+</style>
+<rect class="canvas" x="0.00" y="0.00" width="869.00" height="517.00"/>
+<text class="title" data-text="24.00 24.00 200.00 30.80"><tspan x="24.00" y="46.00" font-size="22" font-weight="700">acme 構成図：接続</tspan></text>
+<g id="legend" data-legend="692.00 24.00 153.00 188.00">
+<rect class="legend-body" x="692.00" y="24.00" width="153.00" height="188.00"/>
+<text class="legend-label legend-heading" data-text="704.00 32.00 29.00 19.60"><tspan x="704.00" y="46.00" font-size="14" font-weight="700">凡例</tspan></text>
+<rect class="swatch tan" x="704.00" y="61.80" width="16.00" height="12.00"/>
+<text class="legend-label" data-text="732.00 58.00 44.00 19.60"><tspan x="732.00" y="72.00" font-size="14" font-weight="400">利用者</tspan></text>
+<rect class="swatch teal" x="704.00" y="91.40" width="16.00" height="12.00"/>
+<text class="legend-label" data-text="732.00 87.60 43.00 19.60"><tspan x="732.00" y="101.60" font-size="14" font-weight="400">アプリ</tspan></text>
+<rect class="swatch purple" x="704.00" y="121.00" width="16.00" height="12.00"/>
+<text class="legend-label" data-text="732.00 117.20 44.00 19.60"><tspan x="732.00" y="131.20" font-size="14" font-weight="400">保存先</tspan></text>
+<rect class="swatch orange" x="704.00" y="150.60" width="16.00" height="12.00"/>
+<text class="legend-label" data-text="732.00 146.80 29.00 19.60"><tspan x="732.00" y="160.80" font-size="14" font-weight="400">外部</tspan></text>
+<rect class="swatch untrusted" x="704.00" y="180.20" width="16.00" height="12.00"/>
+<text class="legend-label" data-text="732.00 176.40 101.00 19.60"><tspan x="732.00" y="190.40" font-size="14" font-weight="400">信頼しない範囲</tspan></text>
+</g>
+<g id="diagram" transform="translate(24.00 236.00)" data-diagram="24.00 236.00 821.00 257.00">
+<g id="container-z0" class="container " data-container="346.00 16.50 463.00 157.00" data-tab="346.00 16.50 116.00 29.00"><rect class="container-body" x="346.00" y="16.50" width="463.00" height="157.00" rx="8.00"/><rect class="container-header" x="346.00" y="16.50" width="116.00" height="29.00"/><circle data-port="e0 in WEST 346.00,113.25" cx="346.00" cy="113.25" r="0.00"/><circle data-port="e2 in WEST 346.00,145.25" cx="346.00" cy="145.25" r="0.00"/><text class="header" data-text="358.00 24.50 92.00 21.00"><tspan x="358.00" y="39.50" font-size="15" font-weight="700">手元のマシン</tspan></text></g>
+<g id="container-z1" class="container untrusted " data-container="12.00 88.00 197.00 157.00" data-tab="12.00 88.00 149.00 29.00"><rect class="container-body" x="12.00" y="88.00" width="197.00" height="157.00" rx="8.00"/><rect class="container-header" x="12.00" y="88.00" width="149.00" height="29.00"/><path class="lock" d="M 26.00,102.50 v -3 a 3,3 0 0 1 6,0 v 3"/><rect class="lock-body" x="24.00" y="101.50" width="10.00" height="8.00"/><circle data-port="e2 out EAST 209.00,145.25" cx="209.00" cy="145.25" r="0.00"/><text class="header" data-text="42.00 96.00 107.00 21.00"><tspan x="42.00" y="111.00" font-size="15" font-weight="700">外部のサービス</tspan></text></g>
+<g id="edge-e0" class="edge-group" data-source="n0" data-target="n1"><path id="e0-s0" class="edge" data-points="250.00,64.00 250.00,113.25 346.00,113.25" d="M 250.00,64.00 L 250.00,109.25 Q 250.00,113.25 254.00,113.25 L 346.00,113.25"/><path id="e0-s1" class="edge" data-points="346.00,113.25 362.00,113.25" d="M 346.00,113.25 L 352.00,113.25"/><polygon class="arrow-filled" points="362.00,113.25 352.00,118.25 352.00,108.25"/></g>
+<g id="edge-e1" class="edge-group" data-source="n1" data-target="n2"><path id="e1-s0" class="edge" data-points="502.00,109.50 653.00,109.50" d="M 502.00,109.50 L 643.00,109.50"/><polygon class="arrow-filled" points="653.00,109.50 643.00,114.50 643.00,104.50"/></g>
+<g id="edge-e2" class="edge-group" data-source="n3" data-target="n1"><path id="e2-s0" class="edge" data-points="168.00,145.25 209.00,145.25" d="M 168.00,145.25 L 209.00,145.25"/><path id="e2-s1" class="edge" data-points="209.00,145.25 346.00,145.25" d="M 209.00,145.25 L 346.00,145.25"/><path id="e2-s2" class="edge" data-points="346.00,145.25 362.00,145.25" d="M 346.00,145.25 L 352.00,145.25"/><polygon class="arrow-filled" points="362.00,145.25 352.00,150.25 352.00,140.25"/></g>
+<g id="node-n1" class="node box teal" data-node="362.00 61.50 140.00 96.00"><rect class="shape" x="362.00" y="61.50" width="140.00" height="96.00" rx="6.00"/><text class="center" data-text="407.50 98.30 49.00 22.40"><tspan x="432.00" y="114.30" font-size="16" font-weight="700">acme</tspan></text></g>
+<g id="node-n2" class="node store purple" data-node="653.00 78.30 140.00 62.40"><path class="shape" d="M 653.00,86.30 A 70.00,8.00 0 0 1 793.00,86.30 L 793.00,132.70 A 70.00,8.00 0 0 1 653.00,132.70 Z M 653.00,86.30 A 70.00,8.00 0 0 0 793.00,86.30"/><text class="center" data-text="682.00 98.30 82.00 22.40"><tspan x="723.00" y="114.30" font-size="16" font-weight="700">保存データ</tspan></text></g>
+<g id="node-n3" class="node external orange" data-node="28.00 133.00 140.00 96.00"><rect class="shape" x="28.00" y="133.00" width="140.00" height="96.00" rx="6.00"/><text class="center" data-text="54.00 169.80 88.00 22.40"><tspan x="98.00" y="185.80" font-size="16" font-weight="700">外部の API</tspan></text></g>
+<g id="node-n0" class="node terminal tan" data-node="180.00 12.00 140.00 52.00"><rect class="shape" x="180.00" y="12.00" width="140.00" height="52.00" rx="26.00"/><text class="center" data-text="225.00 26.80 50.00 22.40"><tspan x="250.00" y="42.80" font-size="16" font-weight="700">利用者</tspan></text></g>
+<g id="label-e0-label" data-pill="258.50 88.25 79.00 21.00"><rect class="pill" x="258.50" y="88.25" width="79.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="264.50 92.25 67.00 13.00"><tspan class="mono" x="298.00" y="105.25" font-size="13" font-weight="400">依頼を送る</tspan></text></g>
+<g id="label-e1-label" data-pill="517.50 84.50 120.00 21.00"><rect class="pill" x="517.50" y="84.50" width="120.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="523.50 88.50 108.00 13.00"><tspan class="mono" x="577.50" y="101.50" font-size="13" font-weight="400">データを保存する</tspan></text></g>
+<g id="label-e2-label" data-pill="238.00 149.25 79.00 21.00"><rect class="pill" x="238.00" y="149.25" width="79.00" height="21.00" rx="4.00"/><text class="center edge-label" data-text="244.00 153.25 67.00 13.00"><tspan class="mono" x="277.50" y="166.25" font-size="13" font-weight="400">結果を送る</tspan></text></g>
+</g>
+</svg>

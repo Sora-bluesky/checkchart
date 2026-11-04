@@ -1,0 +1,22 @@
+---
+title: "acme architectureﬂ°°58¶ß outside input"
+---
+flowchart LR
+  subgraph legend["Legend"]
+    direction LR
+    lg0["Untrusted content"]
+    lg1["Breaks TrustChecked"]
+    lg0 ~~~ lg1
+  end
+  class lg0 untrusted
+  class lg1 breaks
+  subgraph z0["Outside"]
+    n0["Sender"]
+  end
+  n1["acme API"]
+  n0 -->|"Sends input"| n1
+  classDef untrusted fill:#f6f7f9,stroke:#4b525d,stroke-width:2px,stroke-dasharray:6 4
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class z0 untrusted
+  class n0 breaks
+  class n1 breaks

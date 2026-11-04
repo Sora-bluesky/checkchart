@@ -17,21 +17,18 @@ flowchart LR
   class lg3 orange
   class lg4 untrusted
   subgraph z0["Your machine"]
-    subgraph z1["Application process"]
-      n1["acme"]
-    end
+    n1["acme"]
     n2[("Saved data")]
   end
-  subgraph z2["Remote service"]
-    n3[/"Remote endpoint"/]
+  subgraph z1["Remote service"]
+    n3[/"Remote API"/]
   end
   n0(["You"])
   n0 -->|"Submits a request"| n1
-  n1 <-->|"Reads and writes data"| n2
-  n1 -.->|"Requests a result"| n3
-  n3 -.->|"Returns a result"| n1
+  n1 -->|"Saves data"| n2
+  n3 -->|"Sends a result"| n1
   classDef untrusted fill:#f6f7f9,stroke:#4b525d,stroke-width:2px,stroke-dasharray:6 4
-  class z2 untrusted
+  class z1 untrusted
   class n0 tan
   class n1 teal
   class n2 purple

@@ -1,22 +1,20 @@
 {
   "version": 1,
-  "wideExamples": {
-    "examples/architecture": "Complete captions and one-line tabs retain the LR zone, label and paired-port clearances; nested-zone compaction still exceeds 1100px."
-  },
+  "wideExamples": {},
   "charts": {
     "examples/architecture": {
       "totalBends": 1,
-      "totalEdgeLength": 1230.85,
+      "totalEdgeLength": 687.25,
       "crossings": 0,
       "maxLabelDistance": 4,
       "meanLabelDistance": 4,
       "maxDetourRatio": 1,
       "maxTabLines": 1,
-      "totalTabLines": 3,
+      "totalTabLines": 2,
       "sameFaceCrossings": 0,
       "labelAffinityViolations": 0,
-      "width": 1306.75,
-      "height": 617.4
+      "width": 947,
+      "height": 517
     },
     "examples/flow": {
       "totalBends": 4,
