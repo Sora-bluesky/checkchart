@@ -10,14 +10,16 @@ A diagram should answer one question for one reader, so the skill starts there. 
 
 ## What it checks
 
-Rules decide the exit code. When one breaks, the report gives the shortest path to the problem and the chart marks it in red.
+Rules decide the exit code. When one breaks, the report gives the shortest path to the problem and the chart marks it in red. Here, data from an untrusted zone reaches a trusted component and nothing checks it:
+
+![A chart that breaks the TrustChecked rule, marked in red](examples/unchecked-input/chart.svg)
 
 - In a flowchart, every node can be reached from a start and can still reach an end, and each decision has two or more ways out with different conditions.
 - In a sequence diagram, every call gets a reply or declares a timeout, every reply answers an earlier call and goes back to the caller, and every lost message names what recovers from it.
 - In an architecture diagram, both ends of every connection exist, and data that leaves an untrusted zone (agent output, a user's repository, a network peer) names the trusted component that checks it.
 - In every chart, the view states a title, a reader and a question, and the product name is spelled the same way everywhere. Architecture arrows all need a label, and a zone may not wrap a single child zone and nothing else.
 
-Warnings point at things that make a chart hard to read: deep nesting, two-way arrows, generic labels such as "uses", crossing lines, too many elements, mixed levels of detail, flows that loop back, and charts wider than 1100px. They do not change the exit code. Their thresholds are judgment calls, and [references/principles.md](skills/checkchart/references/principles.md) lists the sources behind them.
+Warnings point at things that make a chart hard to read: deep nesting, two-way arrows, generic labels such as "uses", crossing lines, too many elements, mixed levels of detail, flows that loop back, charts wider than 1100px, and layouts that had to give up a spacing or routing goal. They do not change the exit code. Their thresholds are judgment calls, and [references/principles.md](skills/checkchart/references/principles.md) lists the sources behind them.
 
 ## How it works
 
@@ -32,17 +34,17 @@ Then run:
 skills/checkchart/scripts/checkchart model.json --view view.mjs --out chart --svg
 ```
 
-The command writes `chart.mmd`, `report.md` and, with `--svg`, `chart.svg`. It exits with 0 when every rule holds, 1 when a rule breaks, and 2 when the input is wrong.
+The command writes `chart.mmd`, `report.md` and, with `--svg`, `chart.svg`. The `--out` folder must be new or empty, so a second run needs another folder. It exits with 0 when every rule holds, 1 when a rule breaks, and 2 when the input is wrong.
 
-The SVG is laid out with [ELK](https://eclipse.dev/elk/) and drawn by checkchart itself: square shapes of one size, right-angle lines that leave the face toward their target, labels next to their own line, zone names on tabs that lines do not cross, and a padlock with a dashed border on untrusted zones. It follows light and dark mode. Drawing needs no browser or network.
+checkchart draws the SVG itself. Flowcharts and architecture diagrams are laid out with [ELK](https://eclipse.dev/elk/). Sequence diagrams use their own layout. Boxes have rounded corners, a person is a pill, stored data is a cylinder and a decision is a diamond. The layout aims for right-angle lines that leave the face toward their target, labels next to their own line and zone names on tabs that lines do not cross. A valid model always draws, and the report adds a `LayoutCompromise` warning when the layout has to give up one of these. Untrusted zones get a padlock and a dashed border. The chart follows light and dark mode. Drawing needs no browser or network.
 
 The Mermaid file uses the same title, Legend and seven group colors as the `statechart` skill in [pstack](https://github.com/cursor/plugins/tree/main/pstack), so charts from both skills sit together in one document. Render it with [Pele](https://pele.run), or add `--fill` to write the colors into the Mermaid text for GitHub, Obsidian and VS Code. checkchart does not draw state diagrams. Use statechart for those.
 
-See [examples/](examples/) for one chart of each kind and a failing example for every rule, and [SKILL.md](skills/checkchart/SKILL.md) for the full rules.
+[examples/](examples/) has one chart of each kind, [a chart with warnings](examples/warnings), [the failing chart above](examples/unchecked-input), [charts with Japanese captions](examples/ja) (two of them break a rule on purpose) and [a failing model for every rule](examples/broken). [SKILL.md](skills/checkchart/SKILL.md) has the full rules.
 
 ## Install
 
-checkchart runs on Node 22.18 or later, Bun 1.1.5 or later, or Deno 2 or later. Mermaid output needs no packages. SVG output needs [elkjs](https://github.com/kieler/elkjs), which only `--svg` loads:
+checkchart runs on Node 22.18 to 22.x, Node 23.6 or later, Bun 1.1.5 or later, or Deno 2 or later. Mermaid output needs no packages. SVG output needs [elkjs](https://github.com/kieler/elkjs), which only `--svg` loads:
 
 ```sh
 cd skills/checkchart/scripts && npm ci

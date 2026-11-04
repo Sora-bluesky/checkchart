@@ -13,3 +13,12 @@ for (const kind of ["flow", "sequence", "architecture", "warnings"]) test(`${kin
     assert.deepEqual(fs.readFileSync(path.join(result.out, name)), fs.readFileSync(path.join(example, name)));
   }
 });
+
+for (const [name, status] of [["ja/connections", 0], ["ja/architecture", 1], ["unchecked-input", 1]] as const) test(`${name} README figure matches its golden files byte for byte`, (t) => {
+  const example = path.join(root, "examples", name);
+  const result = run(path.join(example, "model.json"), path.join(scratch(t), "out"), path.join(example, "view.mjs"), ["--svg"]);
+  assert.equal(result.status, status, result.stderr || result.report);
+  for (const file of ["chart.svg", "chart.mmd", "report.md"]) {
+    assert.deepEqual(fs.readFileSync(path.join(result.out, file)), fs.readFileSync(path.join(example, file)), file);
+  }
+});

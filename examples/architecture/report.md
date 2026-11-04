@@ -1,12 +1,12 @@
 # acme connections
 
 Reader: A maintainer
-Question: Which components exchange a request and its data?
+Question: Where does data enter acme, and where does it end up?
 
-The model has 4 components and 4 connections. The chart draws 4 components and 4 arrows.
+The model has 4 components and 3 connections. The chart draws 4 components and 3 arrows.
 
 ## Warnings
-- TwoWayArrow: acme to Saved data: Split it into two one-way arrows, or say what goes each way in the label.
+None.
 
 ## Rules that hold
 EndsDeclared, TrustChecked, Connected, PurposeStated, NoRedundantContainer, ArrowsLabeled, ProductName

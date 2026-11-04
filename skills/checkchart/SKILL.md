@@ -118,6 +118,8 @@ Warnings do not change the exit code. Thresholds are advisory choices, not measu
 - `TooManyElements`: over 12 flow nodes or architecture components, 6 sequence participants, 5 direct children in a zone, 5 branches in any `par`, or 6 used color groups; reduce scope or split.
 - `MixedLevels`: more than one specified architecture `level`; use separate charts.
 - `FlowLoopsBack`: more than two edges to earlier nodes in the declared order; consider a sequence diagram.
+- `WideChart`: a final SVG wider than 1100px, where documents shrink it and the text gets small; shorten the labels, split the chart or use direction `TB`. Only `--svg` measures it.
+- `LayoutCompromise`: the SVG layout could not keep a spacing or routing goal for an edge; the chart still draws. Only `--svg` reports it. Simplify the chart if the route is hard to read.
 
 Aim for about 20 drawn arrows or fewer. Notes and legend entries are not arrows. A report lists warnings before "Rules that hold". Rules show at most five offenders, shortest path first, then count the rest; charts mark all offenders. Flow failures show shortest paths from any start, or explain unreachability and loops. Sequence paths show involved messages in document order. Architecture paths name both ends.
 

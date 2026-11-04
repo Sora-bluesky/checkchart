@@ -1,0 +1,35 @@
+---
+title: "acme 構成図：接続"
+---
+flowchart LR
+  subgraph legend["凡例"]
+    direction LR
+    lg0["利用者"]
+    lg1["アプリ"]
+    lg2["保存先"]
+    lg3["外部"]
+    lg4["信頼しない範囲"]
+    lg0 ~~~ lg1 ~~~ lg2 ~~~ lg3 ~~~ lg4
+  end
+  class lg0 tan
+  class lg1 teal
+  class lg2 purple
+  class lg3 orange
+  class lg4 untrusted
+  subgraph z0["手元のマシン"]
+    n1["acme"]
+    n2[("保存データ")]
+  end
+  subgraph z1["外部のサービス"]
+    n3[/"外部の API"/]
+  end
+  n0(["利用者"])
+  n0 -->|"依頼を送る"| n1
+  n1 -->|"データを保存する"| n2
+  n3 -->|"結果を送る"| n1
+  classDef untrusted fill:#f6f7f9,stroke:#4b525d,stroke-width:2px,stroke-dasharray:6 4
+  class z1 untrusted
+  class n0 tan
+  class n1 teal
+  class n2 purple
+  class n3 orange
