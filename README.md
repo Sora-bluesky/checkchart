@@ -14,9 +14,9 @@ Rules decide the exit code. When one breaks, the report gives the shortest path 
 
 ![A chart that breaks the TrustChecked rule, marked in red](examples/unchecked-input/chart.svg)
 
-- In a flowchart, every node can be reached from a start and can still reach an end, and each decision has two or more ways out with different conditions.
+- In a flowchart, every node can be reached from a start, every node except a store can still reach an end, and each decision has two or more ways out with different conditions.
 - In a sequence diagram, every call gets a reply or declares a timeout, every reply answers an earlier call and goes back to the caller, and every lost message names what recovers from it.
-- In an architecture diagram, both ends of every connection exist, and data that leaves an untrusted zone (agent output, a user's repository, a network peer) names the trusted component that checks it.
+- In an architecture diagram, both ends of every connection exist, and data that goes from an untrusted zone (agent output, a user's repository, a network peer) to a trusted component names that component as the one that checks it.
 - In every chart, the view states a title, a reader and a question, and the product name is spelled the same way everywhere. Architecture arrows all need a label, and a zone may not wrap a single child zone and nothing else.
 
 Warnings point at things that make a chart hard to read: deep nesting, two-way arrows, generic labels such as "uses", crossing lines, too many elements, mixed levels of detail, flows that loop back, charts wider than 1100px, and layouts that had to give up a spacing or routing goal. They do not change the exit code. Their thresholds are judgment calls, and [references/principles.md](skills/checkchart/references/principles.md) lists the sources behind them.
