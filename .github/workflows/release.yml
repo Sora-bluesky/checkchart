@@ -1,0 +1,102 @@
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag
+        required: true
+        type: string
+permissions: {}
+concurrency:
+  group: "release-${{ inputs.tag || github.ref_name }}"
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    env:
+      TAG: "${{ inputs.tag || github.ref_name }}"
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Validate the release tag before checkout
+        run: |
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+      - name: Check out the release tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: "refs/tags/${{ env.TAG }}"
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify the checked-out commit and set build metadata
+        run: |
+          set -euo pipefail
+          tag_commit=$(git rev-parse --verify "refs/tags/$TAG^{commit}")
+          test "$(git rev-parse HEAD)" = "$tag_commit"
+          echo "VERSION=${TAG#v}" >> "$GITHUB_ENV"
+      - name: Set up Node.js 24.22.1
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.22.1
+          package-manager-cache: false
+      - name: Verify the tag and plugin versions
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+
+          const version = JSON.parse(readFileSync('.claude-plugin/plugin.json', 'utf8')).version;
+          if (version !== process.env.VERSION) {
+            throw new Error('Tag/plugin version mismatch');
+          }
+          JS
+      - name: Refuse to overwrite an existing release
+        run: |
+          set -euo pipefail
+          if release_response=$(gh api --include --silent "repos/$GITHUB_REPOSITORY/releases/tags/$TAG"); then
+            echo "Release already exists" >&2
+            exit 1
+          fi
+          status_line=${release_response%%$'\n'*}
+          if [[ ! "$status_line" =~ ^HTTP/[0-9.]+[[:space:]]404([[:space:]]|$) ]]; then
+            echo "Could not determine whether the release exists" >&2
+            exit 1
+          fi
+        env:
+          GH_TOKEN: "${{ github.token }}"
+      - name: Build the source archive
+        run: |
+          mkdir dist
+          git archive --format=zip --prefix="checkchart-$VERSION/" --output="dist/checkchart-$VERSION.zip" "refs/tags/$TAG^{commit}"
+      - name: Verify the source archive
+        run: |
+          set -euo pipefail
+          archive_dir=$(mktemp -d "$RUNNER_TEMP/checkchart-release.XXXXXX")
+          unzip "dist/checkchart-$VERSION.zip" -d "$archive_dir"
+          cd "$archive_dir/checkchart-$VERSION/skills/checkchart/scripts"
+          npm ci --ignore-scripts --no-audit --no-fund
+          node --disable-warning=ExperimentalWarning --test test/*.test.ts
+          ./checkchart ../../../examples/flow/model.json --view ../../../examples/flow/view.mjs --out "$archive_dir/out" --svg
+      - name: Attest the build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/*
+      - name: Generate SHA256 checksums
+        run: |
+          set -euo pipefail
+          (
+            cd dist
+            sha256sum -- *
+          ) > SHA256SUMS
+      - name: Create a draft release
+        run: |
+          gh release create "$TAG" dist/* SHA256SUMS --draft --verify-tag --title "checkchart $VERSION" --notes "Release notes will be added before publishing."
+        env:
+          GH_TOKEN: "${{ github.token }}"
